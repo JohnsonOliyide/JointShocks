@@ -25,7 +25,7 @@ install_github("JohnsonOliyide/JointShocks")
 
 ## Step 3: Go through the tutorial
 
-JointShocks Tutorial (link to come)
+[JointShocks Tutorial](https://johnsonoliyide.github.io/JointShocks/)
 
 The tutorial walks through estimating a VAR model, computing joint and generalized impulse response functions, joint and generalized forecast error variance decompositions, and spillover metrics over both the full sample and rolling windows, with full worked examples using the bundled bank volatility dataset.
 
