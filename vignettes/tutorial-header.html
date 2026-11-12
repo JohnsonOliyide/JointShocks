@@ -97,3 +97,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 </script>
+
+<style>
+.spillover-table { width: 100%; overflow-x: auto; margin: 24px 0; }
+.spillover-table table { display: table; width: max-content; min-width: 100%; margin: 0; font-size: 13px; font-variant-numeric: tabular-nums; }
+.spillover-table caption { text-align: left; font-weight: 600; color: #87253c; padding-bottom: 10px; }
+.spillover-table th, .spillover-table td { padding: 7px 9px; text-align: right; }
+.spillover-table th:first-child, .spillover-table td:first-child { text-align: left; }
+.spillover-table tbody tr:nth-last-child(2) td { border-top: 2px solid #87253c; }
+.spillover-table tbody tr:last-child td { font-weight: 600; background: #f8f4f0; }
+.spillover-table:focus-visible { outline: 2px solid #87253c; outline-offset: 3px; }
+</style>

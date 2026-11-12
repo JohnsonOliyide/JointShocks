@@ -68,6 +68,28 @@ knitr::knit_hooks$set(output = function(x, options) {
 })
 knitr::opts_chunk$set(linewidth = 80)
 
+# Render the exact matrix returned by summary(), without its console printing.
+# Both formats share the same values, row labels, and column labels.
+spillover_table <- function(object, caption) {
+  invisible(capture.output(tab <- summary(object)))
+  tab[] <- trimws(tab)
+  if (knitr::is_html_output()) {
+    cat('<div class="spillover-table" role="region" tabindex="0"',
+        ' aria-label="', caption, '">\n', sep = "")
+    cat(as.character(knitr::kable(tab, format = "html", escape = TRUE,
+                                align = rep("r", ncol(tab)), caption = caption)))
+    cat("\n</div>\n")
+  } else {
+    cat("\\begin{center}\n\\textbf{", caption, "}\\par\\smallskip\n",
+        "\\resizebox{\\linewidth}{!}{%\n", sep = "")
+    cat(as.character(knitr::kable(tab, format = "latex", escape = TRUE,
+                                align = rep("r", ncol(tab)))))
+    cat("\n}\n\\end{center}\n")
+  }
+  invisible(tab)
+}
+
+
 ```
 
 # Installation Procedure
@@ -438,9 +460,12 @@ In the upper left matrix, rows identify the banks receiving shocks and columns i
 This summary can be generated using:
 
 
-```{r}
+```{r, eval=FALSE}
 summary(jointspill_results)
+```
 
+```{r, echo=FALSE, results="asis"}
+joint_summary_table <- spillover_table(jointspill_results, "Joint spillover summary")
 ```
 
 As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gFEVD matrix) implies that 19.34% of Bank of America's (BAC) forecast error variance can be explained by the shocks of Bank of New York Mellon (BK).  The first value in the "FROM Others" column (the first element of **jnt_from_others_to_i**) implies that 82.64% of Bank of America's forecast error variance can be jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of **jnt_to_others_from_i**) implies that the joint total spillover from Bank of America to the other ten banks is 95.07%.  Note that this value can exceed 100%.  The first value in the "Net" row (the first element of **jnt_net**) implies that the joint net total spillover for Bank of America is 12.43 percentage points.  A positive net value identifies a net transmitter; a negative value identifies a net receiver. Bank of America is therefore a net transmitter in this example.  Lastly, the value in the bottom-right is the joint spillover index (**jSOI**).  This indicates that, on average, 58.15% of a bank's forecast error variance can be explained by jointly conditioning on the shocks of the other ten banks in the model.
@@ -471,8 +496,12 @@ As in @DY2012 and @DY2014, users can use the generic `summary()` function to gen
 - The **bottom-right** cell presents the overall **generalized spillover index (gSOI)**.
  
 
-```{r}
+```{r, eval=FALSE}
 summary(genspill_results)
+```
+
+```{r, echo=FALSE, results="asis"}
+generalized_summary_table <- spillover_table(genspill_results, "Generalized spillover summary")
 ```
 
 As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gSOT matrix) shows the generalized bilateral spillover from Bank of New York Mellon (BK) to Bank of America (BAC) is 4.43%.  Because of the row-sum normalization used by DY [@DY2012;@DY2014], this 4.43% is NOT the same thing as the percent of Bank of America's forecast error variance explained by the shocks of Bank of New York Mellon.  The first value in the "FROM Others" column (the first element of gen_from_others_to_i) shows the generalized total spillover from the other ten banks to Bank of America is 78.60%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 78.60% is NOT the same thing as the percent of Bank of America's forecast error variance jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of gen_to_others_from_i) shows the generalized total spillover from Bank of America to the other ten banks is 112.31%.  The first value in the "Net" row (the first element of gen_net) implies that the generalized net total spillover for Bank of America is 33.72 percentage points.  A positive generalized net value identifies a net transmitter and a negative value identifies a net receiver. Lastly, the value in the bottom-right is the generalized spillover index (gSOI) of 69.15%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 69.15% is not the same thing as the average percent of a bank's forecast error variance jointly explained by the shocks of the other ten banks in the model.

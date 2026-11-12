@@ -25,6 +25,7 @@ rmarkdown::render(
 objects <- c(
   "jIRF", "gIRF", "jfevd", "jIRF_CI", "gIRF_sum_CI", "gIRF_CI",
   "jointspill_results", "genspill_results",
+  "joint_summary_table", "generalized_summary_table",
   "joint_spill_results_roll", "gen_spill_result_roll"
 )
 checks <- vapply(objects, function(name) {
