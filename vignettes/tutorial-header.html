@@ -1,0 +1,83 @@
+<style>
+:root { color-scheme: light; --blue: #245a9b; --ink: #253348; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+body { max-width: 900px; margin: 0 auto; padding: 64px 48px 100px; color: var(--ink); background: white; font: 16px/1.75 system-ui, -apple-system, "Segoe UI", sans-serif; }
+body > .title { font-size: 42px; line-height: 1.15; letter-spacing: -1.5px; margin: 0 0 16px; color: #162b47; }
+.author { margin: 0 0 36px; padding: 0; border: 0; font-size: 15px; font-weight: 400; color: #607086; }
+h1,h2,h3,h4 { color: #162b47; line-height: 1.35; }
+.section > h1 { font-size: 29px; margin: 56px 0 20px; padding: 0 0 12px; border-bottom: 1px solid #dde5ef; }
+h2 { font-size: 23px; margin: 40px 0 18px; padding: 0; border: 0; }
+h3 { font-size: 19px; margin: 32px 0 14px; padding: 0; border: 0; }
+p { margin: 0 0 18px; }
+a, a:visited { color: var(--blue); }
+a:hover { color: #153c6d; text-decoration: underline; }
+#TOC { width: auto; margin: 0 0 36px; padding: 22px; background: #f7f9fc; border: 1px solid #e0e7ef; border-radius: 8px; font-size: 14px; line-height: 1.5; }
+#TOC::before { content: "ON THIS PAGE"; display: block; color: #6c7a8c; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 18px; }
+#TOC ul, #TOC ul ul { list-style: none; margin: 0; padding: 0; }
+#TOC ul ul { padding-left: 14px; margin: 6px 0 14px; border-left: 1px solid #dce4ee; }
+#TOC li { line-height: 1.5; list-style: none; margin: 0 0 10px; }
+#TOC a { display: block; color: #56677e; text-decoration: none; }
+#TOC a:hover, #TOC a[aria-current] { color: #174d91; }
+.toc-section-number { display: none; }
+pre, pre:not([class]) { position: relative; margin: 18px 0 24px; padding: 20px; border: 1px solid #e0e6ee; border-radius: 8px; background: #f6f8fb; overflow-x: auto; }
+pre.sourceCode { padding-top: 44px; }
+div.sourceCode { margin: 18px 0 24px; }
+code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.65; background: #f1f4f8; }
+pre code, pre > code.sourceCode { white-space: pre; background: transparent; }
+pre > code.sourceCode > span { line-height: 1.65; }
+p > code, li > code { padding: 3px 5px; border-radius: 4px; }
+.copy-code { position: absolute; right: 10px; top: 8px; padding: 4px 9px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #465a73; font: 12px system-ui; cursor: pointer; }
+.copy-code:hover { border-color: #245a9b; color: #245a9b; }
+.copy-code:focus-visible, a:focus-visible { outline: 2px solid #245a9b; outline-offset: 3px; }
+img { display: block; max-width: 100%; height: auto; margin: 30px auto; padding: 0; border: 0; border-radius: 0; }
+table { display: block; width: 100%; overflow-x: auto; border: 0; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+table th, table td { border: 0; border-bottom: 1px solid #e0e6ee; padding: 10px 14px; white-space: nowrap; }
+table thead { background: #edf2f8; }
+blockquote { border-left: 3px solid #729ac9; background: #f5f8fc; padding: 16px 20px; margin: 24px 0; }
+.csl-entry { font-size: 14px; margin-bottom: 16px !important; }
+@media (min-width: 1200px) {
+ body { margin-left: calc(50% - 270px); margin-right: auto; width: min(900px, calc(100% - 340px)); }
+ #TOC { position: fixed; left: max(24px, calc(50% - 590px)); top: 56px; bottom: 40px; width: 260px; overflow-y: auto; background: white; border: 0; border-right: 1px solid #e0e7ef; border-radius: 0; padding: 8px 24px 24px 0; }
+}
+@media (max-width: 600px) {
+ body { padding: 32px 20px 64px; font-size: 16px; }
+ body > .title { font-size: 34px; }
+ .section > h1 { font-size: 26px; }
+ h2 { font-size: 22px; }
+ pre { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media print { #TOC, .copy-code { display: none; } body { width: auto; max-width: none; margin: 0; padding: 0; } pre, pre code { white-space: pre-wrap !important; } }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var toc = document.querySelector("#TOC");
+  if (toc) { toc.setAttribute("role", "navigation"); toc.setAttribute("aria-label", "Tutorial sections"); }
+  var labels = ["Overview", "Installation", "Load your data", "Example dataset", "Empirical analysis", "Impulse responses and variance decompositions", "Spillover metrics"];
+  if (toc) toc.querySelectorAll("a").forEach(function(a, i) { if (labels[i]) a.textContent = labels[i]; });
+  document.querySelectorAll("pre.sourceCode").forEach(function (pre) {
+    var button = document.createElement("button");
+    button.className = "copy-code"; button.type = "button"; button.textContent = "Copy";
+    button.setAttribute("aria-label", "Copy R code");
+    button.addEventListener("click", async function () {
+      try { await navigator.clipboard.writeText(pre.querySelector("code").textContent); button.textContent = "Copied"; }
+      catch (e) { button.textContent = "Select code"; var range = document.createRange(); range.selectNodeContents(pre.querySelector("code")); var selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range); }
+      setTimeout(function () { button.textContent = "Copy"; }, 1800);
+    });
+    pre.appendChild(button);
+  });
+  if (toc && "IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        toc.querySelectorAll("a").forEach(function(a) {
+          if (a.hash.slice(1) === entry.target.id) a.setAttribute("aria-current", "location");
+          else a.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-10% 0px -65% 0px" });
+    toc.querySelectorAll("a").forEach(function(a) { var section = document.getElementById(a.hash.slice(1)); if (section) observer.observe(section); });
+  }
+});
+</script>

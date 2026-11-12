@@ -353,6 +353,90 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
+<style>
+:root { color-scheme: light; --blue: #245a9b; --ink: #253348; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+body { max-width: 900px; margin: 0 auto; padding: 64px 48px 100px; color: var(--ink); background: white; font: 16px/1.75 system-ui, -apple-system, "Segoe UI", sans-serif; }
+body > .title { font-size: 42px; line-height: 1.15; letter-spacing: -1.5px; margin: 0 0 16px; color: #162b47; }
+.author { margin: 0 0 36px; padding: 0; border: 0; font-size: 15px; font-weight: 400; color: #607086; }
+h1,h2,h3,h4 { color: #162b47; line-height: 1.35; }
+.section > h1 { font-size: 29px; margin: 56px 0 20px; padding: 0 0 12px; border-bottom: 1px solid #dde5ef; }
+h2 { font-size: 23px; margin: 40px 0 18px; padding: 0; border: 0; }
+h3 { font-size: 19px; margin: 32px 0 14px; padding: 0; border: 0; }
+p { margin: 0 0 18px; }
+a, a:visited { color: var(--blue); }
+a:hover { color: #153c6d; text-decoration: underline; }
+#TOC { width: auto; margin: 0 0 36px; padding: 22px; background: #f7f9fc; border: 1px solid #e0e7ef; border-radius: 8px; font-size: 14px; line-height: 1.5; }
+#TOC::before { content: "ON THIS PAGE"; display: block; color: #6c7a8c; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 18px; }
+#TOC ul, #TOC ul ul { list-style: none; margin: 0; padding: 0; }
+#TOC ul ul { padding-left: 14px; margin: 6px 0 14px; border-left: 1px solid #dce4ee; }
+#TOC li { line-height: 1.5; list-style: none; margin: 0 0 10px; }
+#TOC a { display: block; color: #56677e; text-decoration: none; }
+#TOC a:hover, #TOC a[aria-current] { color: #174d91; }
+.toc-section-number { display: none; }
+pre, pre:not([class]) { position: relative; margin: 18px 0 24px; padding: 20px; border: 1px solid #e0e6ee; border-radius: 8px; background: #f6f8fb; overflow-x: auto; }
+pre.sourceCode { padding-top: 44px; }
+div.sourceCode { margin: 18px 0 24px; }
+code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.65; background: #f1f4f8; }
+pre code, pre > code.sourceCode { white-space: pre; background: transparent; }
+pre > code.sourceCode > span { line-height: 1.65; }
+p > code, li > code { padding: 3px 5px; border-radius: 4px; }
+.copy-code { position: absolute; right: 10px; top: 8px; padding: 4px 9px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #465a73; font: 12px system-ui; cursor: pointer; }
+.copy-code:hover { border-color: #245a9b; color: #245a9b; }
+.copy-code:focus-visible, a:focus-visible { outline: 2px solid #245a9b; outline-offset: 3px; }
+img { display: block; max-width: 100%; height: auto; margin: 30px auto; padding: 0; border: 0; border-radius: 0; }
+table { display: block; width: 100%; overflow-x: auto; border: 0; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+table th, table td { border: 0; border-bottom: 1px solid #e0e6ee; padding: 10px 14px; white-space: nowrap; }
+table thead { background: #edf2f8; }
+blockquote { border-left: 3px solid #729ac9; background: #f5f8fc; padding: 16px 20px; margin: 24px 0; }
+.csl-entry { font-size: 14px; margin-bottom: 16px !important; }
+@media (min-width: 1200px) {
+ body { margin-left: calc(50% - 270px); margin-right: auto; width: min(900px, calc(100% - 340px)); }
+ #TOC { position: fixed; left: max(24px, calc(50% - 590px)); top: 56px; bottom: 40px; width: 260px; overflow-y: auto; background: white; border: 0; border-right: 1px solid #e0e7ef; border-radius: 0; padding: 8px 24px 24px 0; }
+}
+@media (max-width: 600px) {
+ body { padding: 32px 20px 64px; font-size: 16px; }
+ body > .title { font-size: 34px; }
+ .section > h1 { font-size: 26px; }
+ h2 { font-size: 22px; }
+ pre { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media print { #TOC, .copy-code { display: none; } body { width: auto; max-width: none; margin: 0; padding: 0; } pre, pre code { white-space: pre-wrap !important; } }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var toc = document.querySelector("#TOC");
+  if (toc) { toc.setAttribute("role", "navigation"); toc.setAttribute("aria-label", "Tutorial sections"); }
+  var labels = ["Overview", "Installation", "Load your data", "Example dataset", "Empirical analysis", "Impulse responses and variance decompositions", "Spillover metrics"];
+  if (toc) toc.querySelectorAll("a").forEach(function(a, i) { if (labels[i]) a.textContent = labels[i]; });
+  document.querySelectorAll("pre.sourceCode").forEach(function (pre) {
+    var button = document.createElement("button");
+    button.className = "copy-code"; button.type = "button"; button.textContent = "Copy";
+    button.setAttribute("aria-label", "Copy R code");
+    button.addEventListener("click", async function () {
+      try { await navigator.clipboard.writeText(pre.querySelector("code").textContent); button.textContent = "Copied"; }
+      catch (e) { button.textContent = "Select code"; var range = document.createRange(); range.selectNodeContents(pre.querySelector("code")); var selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range); }
+      setTimeout(function () { button.textContent = "Copy"; }, 1800);
+    });
+    pre.appendChild(button);
+  });
+  if (toc && "IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        toc.querySelectorAll("a").forEach(function(a) {
+          if (a.hash.slice(1) === entry.target.id) a.setAttribute("aria-current", "location");
+          else a.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-10% 0px -65% 0px" });
+    toc.querySelectorAll("a").forEach(function(a) { var section = document.getElementById(a.hash.slice(1)); if (section) observer.observe(section); });
+  }
+});
+</script>
+
 </head>
 
 <body>
@@ -423,8 +507,7 @@ estimating the joint spillover metrics as developed in <span class="citation">La
 spillover metrics in <span class="citation">Diebold and Yilmaz
 (2012)</span> and <span class="citation">Diebold and Yılmaz
 (2014)</span>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#install.packages(&quot;xfun&quot;)</span></span></code></pre></div>
+
 </div>
 <div id="installation-procedure" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Installation
@@ -439,23 +522,20 @@ once):</p>
 <p>Because the package relies on vector autoregressions, be sure to load
 the <code>vars</code> package:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;vars&quot;</span>)</span></code></pre></div>
-<pre><code>## Warning: package &#39;vars&#39; was built under R version 4.4.1</code></pre>
-<pre><code>## Loading required package: MASS</code></pre>
-<pre><code>## Loading required package: strucchange</code></pre>
-<pre><code>## Warning: package &#39;strucchange&#39; was built under R version 4.4.1</code></pre>
-<pre><code>## Loading required package: zoo</code></pre>
-<pre><code>## Warning: package &#39;zoo&#39; was built under R version 4.4.1</code></pre>
-<pre><code>## 
-## Attaching package: &#39;zoo&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     as.Date, as.Date.numeric</code></pre>
-<pre><code>## Loading required package: sandwich</code></pre>
-<pre><code>## Warning: package &#39;sandwich&#39; was built under R version 4.4.1</code></pre>
-<pre><code>## Loading required package: urca</code></pre>
-<pre><code>## Warning: package &#39;urca&#39; was built under R version 4.4.1</code></pre>
-<pre><code>## Loading required package: lmtest</code></pre>
-<pre><code>## Warning: package &#39;lmtest&#39; was built under R version 4.4.1</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div id="loading-your-own-data" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Loading your own
 data</h2>
@@ -463,7 +543,7 @@ data</h2>
 <code>.xlsx</code> format. The first column must represent dates. To
 read <code>.xlsx</code> files, load the <code>readxl</code> package:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;readxl&quot;</span>)</span></code></pre></div>
-<pre><code>## Warning: package &#39;readxl&#39; was built under R version 4.4.1</code></pre>
+
 <p>To load your own dataset, use the <code>read_data()</code> function,
 pointing it at the path to your file and specifying the format of the
 dates in your file’s first column. For example, if you had a file called
@@ -1211,7 +1291,7 @@ Barclays over rolling windows, they can run the following.</p>
 <span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
 <span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Net Total Spillover for BCS&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>#References</p>
+<h2 id="references">References</h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-DY2012" class="csl-entry">
 Diebold, Francis X, and Kamil Yilmaz. 2012. <span>“Better to Give Than
@@ -1271,3 +1351,4 @@ Response Function for Vector Autoregressive Models.”</span>
 
 </body>
 </html>
+

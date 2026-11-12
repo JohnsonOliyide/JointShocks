@@ -6,6 +6,8 @@ output:
     toc: true
     toc_depth: 2
     number_sections: true
+    includes:
+      in_header: tutorial-header.html
   pdf_document:
     toc: true
     toc_depth: 2
@@ -37,8 +39,8 @@ The remainder of this documentation proceeds as follows: Section 2 briefly discu
 
 
 
-```{r setup}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 options(width = 80)
 
 # Wrap long lines of printed output so they don't run off the edge of the
@@ -682,5 +684,6 @@ plot(gen_spill_result_roll$end_of_window_date,
 
 ```
 
-#References
+# References
+
 
