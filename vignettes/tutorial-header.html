@@ -1,57 +1,61 @@
 <style>
-:root { color-scheme: light; --blue: #245a9b; --ink: #253348; }
+:root { color-scheme: light; }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 32px; }
-body { max-width: 900px; margin: 0 auto; padding: 64px 48px 100px; color: var(--ink); background: white; font: 16px/1.75 system-ui, -apple-system, "Segoe UI", sans-serif; }
-body > .title { font-size: 42px; line-height: 1.15; letter-spacing: -1.5px; margin: 0 0 16px; color: #162b47; }
-.author { margin: 0 0 36px; padding: 0; border: 0; font-size: 15px; font-weight: 400; color: #607086; }
-h1,h2,h3,h4 { color: #162b47; line-height: 1.35; }
-.section > h1 { font-size: 29px; margin: 56px 0 20px; padding: 0 0 12px; border-bottom: 1px solid #dde5ef; }
-h2 { font-size: 23px; margin: 40px 0 18px; padding: 0; border: 0; }
-h3 { font-size: 19px; margin: 32px 0 14px; padding: 0; border: 0; }
-p { margin: 0 0 18px; }
-a, a:visited { color: var(--blue); }
-a:hover { color: #153c6d; text-decoration: underline; }
-#TOC { width: auto; margin: 0 0 36px; padding: 22px; background: #f7f9fc; border: 1px solid #e0e7ef; border-radius: 8px; font-size: 14px; line-height: 1.5; }
-#TOC::before { content: "ON THIS PAGE"; display: block; color: #6c7a8c; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 18px; }
-#TOC ul, #TOC ul ul { list-style: none; margin: 0; padding: 0; }
-#TOC ul ul { padding-left: 14px; margin: 6px 0 14px; border-left: 1px solid #dce4ee; }
-#TOC li { line-height: 1.5; list-style: none; margin: 0 0 10px; }
-#TOC a { display: block; color: #56677e; text-decoration: none; }
-#TOC a:hover, #TOC a[aria-current] { color: #174d91; }
-.toc-section-number { display: none; }
-pre, pre:not([class]) { position: relative; margin: 18px 0 24px; padding: 20px; border: 1px solid #e0e6ee; border-radius: 8px; background: #f6f8fb; overflow-x: auto; }
-pre.sourceCode { padding-top: 44px; }
-div.sourceCode { margin: 18px 0 24px; }
-code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.65; background: #f1f4f8; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { max-width: none; width: auto; margin: 0; padding: 0; background: #fff; color: #606c71; font: 18px/1.6 "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.tutorial-banner { text-align: center; color: white; background: linear-gradient(120deg, #155799, #159957); padding: 38px 24px 34px; }
+.tutorial-banner .title { margin: 0 0 14px; color: white; font-size: 36px; font-weight: 700; line-height: 1.3; letter-spacing: 0; }
+.tutorial-banner .subtitle { margin: 0 0 10px; color: rgba(255,255,255,.75); font-size: 23px; font-weight: 400; }
+.tutorial-banner .author { margin: 0; padding: 0; border: 0; color: rgba(255,255,255,.8); font-size: 15px; font-weight: 400; }
+.tutorial-main { max-width: 1024px; margin: 0 auto; padding: 32px 64px 80px; }
+h1,h2,h3,h4 { color: #159957; font-weight: 400; line-height: 1.35; border: 0; padding: 0; }
+.section > h1 { margin: 34px 0 20px; font-size: 29px; }
+h2 { margin: 32px 0 18px; font-size: 25px; }
+h3 { margin: 28px 0 16px; font-size: 21px; }
+h3 strong { font-weight: 400; }
+p { margin: 0 0 22px; }
+a, a:visited { color: #1e6bb8; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.header-section-number, .toc-section-number { display: none; }
+#TOC { position: static; width: auto; height: auto; margin: 0 0 32px; padding: 22px 26px; border: 1px solid #dce6f0; border-radius: 5px; background: #f3f6fa; font-size: 17px; line-height: 1.5; }
+#TOC::before { display: none; }
+#TOC ul, #TOC ul ul { margin: 0; padding-left: 22px; }
+#TOC ul ul { border: 0; }
+#TOC li { line-height: 1.5; margin: 0; list-style: disc outside; }
+#TOC ul ul li { list-style: circle outside; }
+#TOC a { color: #1e6bb8; }
+pre, pre:not([class]) { position: relative; margin: 18px 0 30px; padding: 14px 16px; background: #f3f6fa; border: 1px solid #dce6f0; border-radius: 5px; overflow-x: auto; color: #567482; }
+pre.sourceCode { padding-right: 72px; }
+div.sourceCode { margin: 18px 0 30px; }
+code { font-family: Consolas, "Liberation Mono", Menlo, monospace; font-size: 14px; line-height: 1.55; background: #f3f6fa; color: #567482; }
 pre code, pre > code.sourceCode { white-space: pre; background: transparent; }
-pre > code.sourceCode > span { line-height: 1.65; }
-p > code, li > code { padding: 3px 5px; border-radius: 4px; }
-.copy-code { position: absolute; right: 10px; top: 8px; padding: 4px 9px; border: 1px solid #cbd5e1; border-radius: 4px; background: white; color: #465a73; font: 12px system-ui; cursor: pointer; }
-.copy-code:hover { border-color: #245a9b; color: #245a9b; }
-.copy-code:focus-visible, a:focus-visible { outline: 2px solid #245a9b; outline-offset: 3px; }
-img { display: block; max-width: 100%; height: auto; margin: 30px auto; padding: 0; border: 0; border-radius: 0; }
-table { display: block; width: 100%; overflow-x: auto; border: 0; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
-table th, table td { border: 0; border-bottom: 1px solid #e0e6ee; padding: 10px 14px; white-space: nowrap; }
-table thead { background: #edf2f8; }
-blockquote { border-left: 3px solid #729ac9; background: #f5f8fc; padding: 16px 20px; margin: 24px 0; }
-.csl-entry { font-size: 14px; margin-bottom: 16px !important; }
-@media (min-width: 1200px) {
- body { margin-left: calc(50% - 270px); margin-right: auto; width: min(900px, calc(100% - 340px)); }
- #TOC { position: fixed; left: max(24px, calc(50% - 590px)); top: 56px; bottom: 40px; width: 260px; overflow-y: auto; background: white; border: 0; border-right: 1px solid #e0e7ef; border-radius: 0; padding: 8px 24px 24px 0; }
-}
-@media (max-width: 600px) {
- body { padding: 32px 20px 64px; font-size: 16px; }
- body > .title { font-size: 34px; }
- .section > h1 { font-size: 26px; }
- h2 { font-size: 22px; }
- pre { padding: 14px; }
-}
+pre > code.sourceCode > span { line-height: 1.55; }
+p > code, li > code { padding: 2px 5px; border-radius: 3px; }
+.copy-code { position: absolute; top: 7px; right: 7px; padding: 3px 7px; border: 1px solid #d0dbe5; border-radius: 3px; background: #fff; color: #567482; font: 11px Arial,sans-serif; cursor: pointer; }
+.copy-code:hover { color: #1e6bb8; border-color: #1e6bb8; }
+a:focus-visible, button:focus-visible { outline: 2px solid #1e6bb8; outline-offset: 3px; }
+img { display: block; max-width: 100%; height: auto; padding: 0; border: 0; margin: 28px auto; }
+table { display: block; width: 100%; border: 0; border-collapse: collapse; overflow-x: auto; margin: 24px 0; font-size: 15px; }
+table th, table td { padding: 8px 13px; border: 1px solid #e9ebec; white-space: nowrap; }
+table thead { background: #f3f6fa; }
+blockquote { border-left: 4px solid #dce6f0; padding: 4px 20px; background: transparent; }
+.csl-entry { font-size: 15px; margin-bottom: 16px !important; }
+@media (max-width: 700px) { .tutorial-main { padding: 24px 22px 60px; } .tutorial-banner { padding: 30px 20px; } .tutorial-banner .title { font-size: 30px; } body { font-size: 16px; } #TOC { font-size: 16px; padding: 18px; } .section > h1 { font-size: 26px; } h2 { font-size: 23px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-@media print { #TOC, .copy-code { display: none; } body { width: auto; max-width: none; margin: 0; padding: 0; } pre, pre code { white-space: pre-wrap !important; } }
+@media print { .copy-code, #TOC { display: none; } .tutorial-banner { background: white; color: black; } .tutorial-banner .title, .tutorial-banner .author, .tutorial-banner .subtitle { color: black; } .tutorial-main { max-width: none; padding: 0; } pre, pre code { white-space: pre-wrap !important; } }
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  if (!document.querySelector(".tutorial-banner")) {
+    var banner = document.createElement("header"); banner.className = "tutorial-banner";
+    var title = document.querySelector("h1.title"), author = document.querySelector(".author");
+    if (title) { title.textContent = "JointShocks"; banner.appendChild(title); }
+    var subtitle = document.createElement("p"); subtitle.className = "subtitle"; subtitle.textContent = "R Package Tutorial"; banner.appendChild(subtitle);
+    if (author) banner.appendChild(author);
+    var main = document.createElement("main"); main.className = "tutorial-main";
+    Array.from(document.body.childNodes).forEach(function(node) { main.appendChild(node); });
+    document.body.appendChild(banner); document.body.appendChild(main);
+  }
   var toc = document.querySelector("#TOC");
   if (toc) { toc.setAttribute("role", "navigation"); toc.setAttribute("aria-label", "Tutorial sections"); }
   var labels = ["Overview", "Installation", "Load your data", "Example dataset", "Empirical analysis", "Impulse responses and variance decompositions", "Spillover metrics"];
