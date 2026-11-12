@@ -571,12 +571,114 @@ approximately <strong>16%</strong> of the <span class="math inline">\(H\)</span>
 <strong>Bank of America (BAC)</strong> is attributable to joint shocks
 from <strong>Barclays (BCS)</strong>, <strong>Credit Suisse
 (CS)</strong>, and <strong>Deutsche Bank (DB)</strong>.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>jfevd <span class="ot">&lt;-</span> <span class="fu">run_full_jFEVD</span>(VAR_model, <span class="at">from_set =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>), <span class="at">H =</span> <span class="dv">30</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>jfevd</span></code></pre></div>
-<pre><code>##        BAC         BK        BCS          C         CS         DB         GS 
-## 0.15952241 0.05223781 0.96668595 0.16460344 0.95693593 0.94891627 0.14332551 
-##        JPM         MS        STT        WFC 
-## 0.16926043 0.13025529 0.05798865 0.08725354</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>jfevd <span class="ot">&lt;-</span> <span class="fu">run_full_jFEVD</span>(VAR_model, <span class="at">from_set =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>), <span class="at">H =</span> <span class="dv">30</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>jfevd</span></code></pre></div>
+<div class="result-table" role="region" tabindex="0" aria-label="Joint FEVD from BCS, CS, and DB (proportions)">
+<table>
+<caption>
+Joint FEVD from BCS, CS, and DB (proportions)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+jFEVD (proportion)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BAC
+</td>
+<td style="text-align:right;">
+0.15952241
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BK
+</td>
+<td style="text-align:right;">
+0.05223781
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BCS
+</td>
+<td style="text-align:right;">
+0.96668595
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:right;">
+0.16460344
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CS
+</td>
+<td style="text-align:right;">
+0.95693593
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DB
+</td>
+<td style="text-align:right;">
+0.94891627
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GS
+</td>
+<td style="text-align:right;">
+0.14332551
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JPM
+</td>
+<td style="text-align:right;">
+0.16926043
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MS
+</td>
+<td style="text-align:right;">
+0.13025529
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+STT
+</td>
+<td style="text-align:right;">
+0.05798865
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WFC
+</td>
+<td style="text-align:right;">
+0.08725354
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="generalized-forecast-error-variance-decomposition-gfevd" class="section level3">
 <h3><strong>Generalized Forecast Error Variance Decomposition
@@ -597,32 +699,474 @@ For instance, using pre-pandemic data, the gFEVD results suggest that
 explained by shocks from <strong>Barclays (BCS)</strong>, and about
 <strong>6%</strong> by shocks from <strong>Deutsche Bank
 (DB)</strong>.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>genspill_results <span class="ot">&lt;-</span> <span class="fu">genspill</span>(VAR_model, <span class="at">H =</span> <span class="dv">30</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>genspill_results<span class="sc">$</span>gFEVD</span></code></pre></div>
-<pre><code>##           BAC         BK        BCS         C         CS         DB        GS
-## BAC 0.9341628 0.19338713 0.07174584 0.6663017 0.11798916 0.06028896 0.5800812
-## BK  0.3636745 0.84861996 0.02595194 0.3133308 0.03611692 0.01708104 0.3630035
-## BCS 0.1105617 0.04713352 0.96118080 0.1137758 0.06482824 0.11523550 0.1256159
-## C   0.5815652 0.18574850 0.08310222 0.9667632 0.11777901 0.05307041 0.4829849
-## CS  0.1623523 0.05632249 0.05827780 0.1567158 0.95408863 0.20545501 0.1330114
-## DB  0.1173690 0.04654549 0.08755388 0.1043196 0.21980032 0.93803018 0.1201977
-## GS  0.5790122 0.16225563 0.08777056 0.5372057 0.08478607 0.04995554 0.9231996
-## JPM 0.6204567 0.18944745 0.09349255 0.6724495 0.11208198 0.05924410 0.5367325
-## MS  0.6003683 0.26112006 0.05947695 0.4635273 0.09129491 0.05815206 0.6050942
-## STT 0.2704402 0.28513342 0.02768311 0.2650836 0.03344899 0.03398801 0.2973659
-## WFC 0.4319118 0.16214739 0.04435500 0.4580954 0.05967095 0.03554170 0.3815070
-##            JPM         MS        STT        WFC
-## BAC 0.65819266 0.43345959 0.16944763 0.47917170
-## BK  0.28284106 0.35771303 0.15529065 0.25641269
-## BCS 0.12192095 0.09830710 0.05181303 0.06028663
-## C   0.58618540 0.39354039 0.23290596 0.41561282
-## CS  0.14284142 0.11647558 0.07622907 0.10152483
-## DB  0.09594272 0.09836325 0.08129486 0.07489256
-## GS  0.55648506 0.40694563 0.16974769 0.41660664
-## JPM 0.93603194 0.37685117 0.19826444 0.55574753
-## MS  0.43309480 0.84542878 0.15862593 0.34361573
-## STT 0.19131216 0.33063710 0.79025181 0.16472681
-## WFC 0.54340354 0.24595280 0.11973258 0.95833134</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>genspill_results <span class="ot">&lt;-</span> <span class="fu">genspill</span>(VAR_model, <span class="at">H =</span> <span class="dv">30</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>genspill_results<span class="sc">$</span>gFEVD</span></code></pre></div>
+<div class="result-table" role="region" tabindex="0" aria-label="Generalized FEVD (proportions)">
+<table>
+<caption>
+Generalized FEVD (proportions)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+BAC
+</th>
+<th style="text-align:right;">
+BK
+</th>
+<th style="text-align:right;">
+BCS
+</th>
+<th style="text-align:right;">
+C
+</th>
+<th style="text-align:right;">
+CS
+</th>
+<th style="text-align:right;">
+DB
+</th>
+<th style="text-align:right;">
+GS
+</th>
+<th style="text-align:right;">
+JPM
+</th>
+<th style="text-align:right;">
+MS
+</th>
+<th style="text-align:right;">
+STT
+</th>
+<th style="text-align:right;">
+WFC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BAC
+</td>
+<td style="text-align:right;">
+0.93416283
+</td>
+<td style="text-align:right;">
+0.19338713
+</td>
+<td style="text-align:right;">
+0.07174584
+</td>
+<td style="text-align:right;">
+0.66630170
+</td>
+<td style="text-align:right;">
+0.11798916
+</td>
+<td style="text-align:right;">
+0.06028896
+</td>
+<td style="text-align:right;">
+0.58008122
+</td>
+<td style="text-align:right;">
+0.65819266
+</td>
+<td style="text-align:right;">
+0.43345959
+</td>
+<td style="text-align:right;">
+0.16944763
+</td>
+<td style="text-align:right;">
+0.47917170
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BK
+</td>
+<td style="text-align:right;">
+0.36367450
+</td>
+<td style="text-align:right;">
+0.84861996
+</td>
+<td style="text-align:right;">
+0.02595194
+</td>
+<td style="text-align:right;">
+0.31333076
+</td>
+<td style="text-align:right;">
+0.03611692
+</td>
+<td style="text-align:right;">
+0.01708104
+</td>
+<td style="text-align:right;">
+0.36300350
+</td>
+<td style="text-align:right;">
+0.28284106
+</td>
+<td style="text-align:right;">
+0.35771303
+</td>
+<td style="text-align:right;">
+0.15529065
+</td>
+<td style="text-align:right;">
+0.25641269
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BCS
+</td>
+<td style="text-align:right;">
+0.11056167
+</td>
+<td style="text-align:right;">
+0.04713352
+</td>
+<td style="text-align:right;">
+0.96118080
+</td>
+<td style="text-align:right;">
+0.11377583
+</td>
+<td style="text-align:right;">
+0.06482824
+</td>
+<td style="text-align:right;">
+0.11523550
+</td>
+<td style="text-align:right;">
+0.12561590
+</td>
+<td style="text-align:right;">
+0.12192095
+</td>
+<td style="text-align:right;">
+0.09830710
+</td>
+<td style="text-align:right;">
+0.05181303
+</td>
+<td style="text-align:right;">
+0.06028663
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:right;">
+0.58156520
+</td>
+<td style="text-align:right;">
+0.18574850
+</td>
+<td style="text-align:right;">
+0.08310222
+</td>
+<td style="text-align:right;">
+0.96676319
+</td>
+<td style="text-align:right;">
+0.11777901
+</td>
+<td style="text-align:right;">
+0.05307041
+</td>
+<td style="text-align:right;">
+0.48298491
+</td>
+<td style="text-align:right;">
+0.58618540
+</td>
+<td style="text-align:right;">
+0.39354039
+</td>
+<td style="text-align:right;">
+0.23290596
+</td>
+<td style="text-align:right;">
+0.41561282
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CS
+</td>
+<td style="text-align:right;">
+0.16235234
+</td>
+<td style="text-align:right;">
+0.05632249
+</td>
+<td style="text-align:right;">
+0.05827780
+</td>
+<td style="text-align:right;">
+0.15671583
+</td>
+<td style="text-align:right;">
+0.95408863
+</td>
+<td style="text-align:right;">
+0.20545501
+</td>
+<td style="text-align:right;">
+0.13301143
+</td>
+<td style="text-align:right;">
+0.14284142
+</td>
+<td style="text-align:right;">
+0.11647558
+</td>
+<td style="text-align:right;">
+0.07622907
+</td>
+<td style="text-align:right;">
+0.10152483
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DB
+</td>
+<td style="text-align:right;">
+0.11736895
+</td>
+<td style="text-align:right;">
+0.04654549
+</td>
+<td style="text-align:right;">
+0.08755388
+</td>
+<td style="text-align:right;">
+0.10431960
+</td>
+<td style="text-align:right;">
+0.21980032
+</td>
+<td style="text-align:right;">
+0.93803018
+</td>
+<td style="text-align:right;">
+0.12019769
+</td>
+<td style="text-align:right;">
+0.09594272
+</td>
+<td style="text-align:right;">
+0.09836325
+</td>
+<td style="text-align:right;">
+0.08129486
+</td>
+<td style="text-align:right;">
+0.07489256
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GS
+</td>
+<td style="text-align:right;">
+0.57901217
+</td>
+<td style="text-align:right;">
+0.16225563
+</td>
+<td style="text-align:right;">
+0.08777056
+</td>
+<td style="text-align:right;">
+0.53720573
+</td>
+<td style="text-align:right;">
+0.08478607
+</td>
+<td style="text-align:right;">
+0.04995554
+</td>
+<td style="text-align:right;">
+0.92319963
+</td>
+<td style="text-align:right;">
+0.55648506
+</td>
+<td style="text-align:right;">
+0.40694563
+</td>
+<td style="text-align:right;">
+0.16974769
+</td>
+<td style="text-align:right;">
+0.41660664
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+JPM
+</td>
+<td style="text-align:right;">
+0.62045672
+</td>
+<td style="text-align:right;">
+0.18944745
+</td>
+<td style="text-align:right;">
+0.09349255
+</td>
+<td style="text-align:right;">
+0.67244954
+</td>
+<td style="text-align:right;">
+0.11208198
+</td>
+<td style="text-align:right;">
+0.05924410
+</td>
+<td style="text-align:right;">
+0.53673248
+</td>
+<td style="text-align:right;">
+0.93603194
+</td>
+<td style="text-align:right;">
+0.37685117
+</td>
+<td style="text-align:right;">
+0.19826444
+</td>
+<td style="text-align:right;">
+0.55574753
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MS
+</td>
+<td style="text-align:right;">
+0.60036826
+</td>
+<td style="text-align:right;">
+0.26112006
+</td>
+<td style="text-align:right;">
+0.05947695
+</td>
+<td style="text-align:right;">
+0.46352734
+</td>
+<td style="text-align:right;">
+0.09129491
+</td>
+<td style="text-align:right;">
+0.05815206
+</td>
+<td style="text-align:right;">
+0.60509422
+</td>
+<td style="text-align:right;">
+0.43309480
+</td>
+<td style="text-align:right;">
+0.84542878
+</td>
+<td style="text-align:right;">
+0.15862593
+</td>
+<td style="text-align:right;">
+0.34361573
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+STT
+</td>
+<td style="text-align:right;">
+0.27044020
+</td>
+<td style="text-align:right;">
+0.28513342
+</td>
+<td style="text-align:right;">
+0.02768311
+</td>
+<td style="text-align:right;">
+0.26508363
+</td>
+<td style="text-align:right;">
+0.03344899
+</td>
+<td style="text-align:right;">
+0.03398801
+</td>
+<td style="text-align:right;">
+0.29736595
+</td>
+<td style="text-align:right;">
+0.19131216
+</td>
+<td style="text-align:right;">
+0.33063710
+</td>
+<td style="text-align:right;">
+0.79025181
+</td>
+<td style="text-align:right;">
+0.16472681
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WFC
+</td>
+<td style="text-align:right;">
+0.43191175
+</td>
+<td style="text-align:right;">
+0.16214739
+</td>
+<td style="text-align:right;">
+0.04435500
+</td>
+<td style="text-align:right;">
+0.45809540
+</td>
+<td style="text-align:right;">
+0.05967095
+</td>
+<td style="text-align:right;">
+0.03554170
+</td>
+<td style="text-align:right;">
+0.38150705
+</td>
+<td style="text-align:right;">
+0.54340354
+</td>
+<td style="text-align:right;">
+0.24595280
+</td>
+<td style="text-align:right;">
+0.11973258
+</td>
+<td style="text-align:right;">
+0.95833134
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="bootstrapping" class="section level3">
 <h3><strong>Bootstrapping</strong></h3>
@@ -661,53 +1205,737 @@ in the joint IRF or the sum of generalized IRFs, and <code>shock</code>
 for a single source in an individual generalized IRF.</p>
 <p><strong>Joint IRF (jIRF) with confidence interval</strong></p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>jIRF_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_jIRF</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shocks =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>),</span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>                           <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">summary</span>(jIRF_CI)</span></code></pre></div>
-<pre><code>## jIRF: The response of BAC due to joint simultaneous shocks from BCS, CS, &amp;
-## 
-##     CI lower bound   mean median original CI upper bound stand. dev.
-## h=0         3.2494 3.6592 3.6633   3.6927         4.0646      0.3146
-## h=1         2.0748 2.5360 2.5381   2.5837         2.9931      0.3753
-## h=2         1.3493 1.7937 1.7821   1.8423         2.2549      0.3641
-## h=3         0.8940 1.2704 1.2646   1.3154         1.6541      0.3028
-## h=4         0.5956 0.8940 0.8884   0.9334         1.1919      0.2379
-## h=5         0.3972 0.6252 0.6169   0.6581         0.8575      0.1831
-## h=6         0.2651 0.4363 0.4262   0.4627         0.6213      0.1403
-## h=7         0.1742 0.3054 0.2979   0.3259         0.4456      0.1079
-## h=8         0.1156 0.2153 0.2080   0.2307         0.3236      0.0834</code></pre>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>                           <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">summary</span>(jIRF_CI)</span></code></pre></div>
+<div class="result-table" role="region" tabindex="0" aria-label="BAC joint response to BCS, CS, and DB: 80% confidence interval">
+<table>
+<caption>
+BAC joint response to BCS, CS, and DB: 80% confidence interval
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+CI lower bound
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+median
+</th>
+<th style="text-align:right;">
+original
+</th>
+<th style="text-align:right;">
+CI upper bound
+</th>
+<th style="text-align:right;">
+stand. dev.
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+h=0
+</td>
+<td style="text-align:right;">
+3.2494
+</td>
+<td style="text-align:right;">
+3.6592
+</td>
+<td style="text-align:right;">
+3.6633
+</td>
+<td style="text-align:right;">
+3.6927
+</td>
+<td style="text-align:right;">
+4.0646
+</td>
+<td style="text-align:right;">
+0.3146
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=1
+</td>
+<td style="text-align:right;">
+2.0748
+</td>
+<td style="text-align:right;">
+2.5360
+</td>
+<td style="text-align:right;">
+2.5381
+</td>
+<td style="text-align:right;">
+2.5837
+</td>
+<td style="text-align:right;">
+2.9931
+</td>
+<td style="text-align:right;">
+0.3753
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=2
+</td>
+<td style="text-align:right;">
+1.3493
+</td>
+<td style="text-align:right;">
+1.7937
+</td>
+<td style="text-align:right;">
+1.7821
+</td>
+<td style="text-align:right;">
+1.8423
+</td>
+<td style="text-align:right;">
+2.2549
+</td>
+<td style="text-align:right;">
+0.3641
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=3
+</td>
+<td style="text-align:right;">
+0.8940
+</td>
+<td style="text-align:right;">
+1.2704
+</td>
+<td style="text-align:right;">
+1.2646
+</td>
+<td style="text-align:right;">
+1.3154
+</td>
+<td style="text-align:right;">
+1.6541
+</td>
+<td style="text-align:right;">
+0.3028
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=4
+</td>
+<td style="text-align:right;">
+0.5956
+</td>
+<td style="text-align:right;">
+0.8940
+</td>
+<td style="text-align:right;">
+0.8884
+</td>
+<td style="text-align:right;">
+0.9334
+</td>
+<td style="text-align:right;">
+1.1919
+</td>
+<td style="text-align:right;">
+0.2379
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=5
+</td>
+<td style="text-align:right;">
+0.3972
+</td>
+<td style="text-align:right;">
+0.6252
+</td>
+<td style="text-align:right;">
+0.6169
+</td>
+<td style="text-align:right;">
+0.6581
+</td>
+<td style="text-align:right;">
+0.8575
+</td>
+<td style="text-align:right;">
+0.1831
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=6
+</td>
+<td style="text-align:right;">
+0.2651
+</td>
+<td style="text-align:right;">
+0.4363
+</td>
+<td style="text-align:right;">
+0.4262
+</td>
+<td style="text-align:right;">
+0.4627
+</td>
+<td style="text-align:right;">
+0.6213
+</td>
+<td style="text-align:right;">
+0.1403
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=7
+</td>
+<td style="text-align:right;">
+0.1742
+</td>
+<td style="text-align:right;">
+0.3054
+</td>
+<td style="text-align:right;">
+0.2979
+</td>
+<td style="text-align:right;">
+0.3259
+</td>
+<td style="text-align:right;">
+0.4456
+</td>
+<td style="text-align:right;">
+0.1079
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=8
+</td>
+<td style="text-align:right;">
+0.1156
+</td>
+<td style="text-align:right;">
+0.2153
+</td>
+<td style="text-align:right;">
+0.2080
+</td>
+<td style="text-align:right;">
+0.2307
+</td>
+<td style="text-align:right;">
+0.3236
+</td>
+<td style="text-align:right;">
+0.0834
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p><strong>Sum of generalized IRFs (gIRF sum) with confidence
 interval</strong></p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>gIRF_sum_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_gIRF_sum</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shocks =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>),</span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>                                   <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="fu">summary</span>(gIRF_sum_CI)</span></code></pre></div>
-<pre><code>## gIRF sum: The sum of the generalized responses of BAC due to individual
-## 
-##     CI lower bound   mean median original CI upper bound stand. dev.
-## h=0         5.2568 6.0866 6.0724   6.1212         6.9244      0.6250
-## h=1         3.3481 4.1835 4.1819   4.2448         5.0479      0.6636
-## h=2         2.1628 2.9434 2.9272   3.0103         3.7357      0.6245
-## h=3         1.4410 2.0793 2.0487   2.1437         2.7196      0.5143
-## h=4         0.9534 1.4618 1.4432   1.5194         1.9717      0.4022
-## h=5         0.6337 1.0219 1.0030   1.0708         1.4075      0.3085
-## h=6         0.4221 0.7129 0.6915   0.7525         1.0114      0.2357
-## h=7         0.2767 0.4987 0.4854   0.5296         0.7292      0.1806
-## h=8         0.1861 0.3512 0.3407   0.3747         0.5351      0.1392</code></pre>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>                                   <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">summary</span>(gIRF_sum_CI)</span></code></pre></div>
+<div class="result-table" role="region" tabindex="0" aria-label="BAC sum of responses to BCS, CS, and DB: 80% confidence interval">
+<table>
+<caption>
+BAC sum of responses to BCS, CS, and DB: 80% confidence interval
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+CI lower bound
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+median
+</th>
+<th style="text-align:right;">
+original
+</th>
+<th style="text-align:right;">
+CI upper bound
+</th>
+<th style="text-align:right;">
+stand. dev.
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+h=0
+</td>
+<td style="text-align:right;">
+5.2568
+</td>
+<td style="text-align:right;">
+6.0866
+</td>
+<td style="text-align:right;">
+6.0724
+</td>
+<td style="text-align:right;">
+6.1212
+</td>
+<td style="text-align:right;">
+6.9244
+</td>
+<td style="text-align:right;">
+0.6250
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=1
+</td>
+<td style="text-align:right;">
+3.3481
+</td>
+<td style="text-align:right;">
+4.1835
+</td>
+<td style="text-align:right;">
+4.1819
+</td>
+<td style="text-align:right;">
+4.2448
+</td>
+<td style="text-align:right;">
+5.0479
+</td>
+<td style="text-align:right;">
+0.6636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=2
+</td>
+<td style="text-align:right;">
+2.1628
+</td>
+<td style="text-align:right;">
+2.9434
+</td>
+<td style="text-align:right;">
+2.9272
+</td>
+<td style="text-align:right;">
+3.0103
+</td>
+<td style="text-align:right;">
+3.7357
+</td>
+<td style="text-align:right;">
+0.6245
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=3
+</td>
+<td style="text-align:right;">
+1.4410
+</td>
+<td style="text-align:right;">
+2.0793
+</td>
+<td style="text-align:right;">
+2.0487
+</td>
+<td style="text-align:right;">
+2.1437
+</td>
+<td style="text-align:right;">
+2.7196
+</td>
+<td style="text-align:right;">
+0.5143
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=4
+</td>
+<td style="text-align:right;">
+0.9534
+</td>
+<td style="text-align:right;">
+1.4618
+</td>
+<td style="text-align:right;">
+1.4432
+</td>
+<td style="text-align:right;">
+1.5194
+</td>
+<td style="text-align:right;">
+1.9717
+</td>
+<td style="text-align:right;">
+0.4022
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=5
+</td>
+<td style="text-align:right;">
+0.6337
+</td>
+<td style="text-align:right;">
+1.0219
+</td>
+<td style="text-align:right;">
+1.0030
+</td>
+<td style="text-align:right;">
+1.0708
+</td>
+<td style="text-align:right;">
+1.4075
+</td>
+<td style="text-align:right;">
+0.3085
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=6
+</td>
+<td style="text-align:right;">
+0.4221
+</td>
+<td style="text-align:right;">
+0.7129
+</td>
+<td style="text-align:right;">
+0.6915
+</td>
+<td style="text-align:right;">
+0.7525
+</td>
+<td style="text-align:right;">
+1.0114
+</td>
+<td style="text-align:right;">
+0.2357
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=7
+</td>
+<td style="text-align:right;">
+0.2767
+</td>
+<td style="text-align:right;">
+0.4987
+</td>
+<td style="text-align:right;">
+0.4854
+</td>
+<td style="text-align:right;">
+0.5296
+</td>
+<td style="text-align:right;">
+0.7292
+</td>
+<td style="text-align:right;">
+0.1806
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=8
+</td>
+<td style="text-align:right;">
+0.1861
+</td>
+<td style="text-align:right;">
+0.3512
+</td>
+<td style="text-align:right;">
+0.3407
+</td>
+<td style="text-align:right;">
+0.3747
+</td>
+<td style="text-align:right;">
+0.5351
+</td>
+<td style="text-align:right;">
+0.1392
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p><strong>A single generalized IRF (gIRF) with confidence
 interval</strong></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>gIRF_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_gIRF</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shock =</span> <span class="st">&quot;BCS&quot;</span>, <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="fu">summary</span>(gIRF_CI)</span></code></pre></div>
-<pre><code>## gIRF: The generalized response of BAC due to a shock from BCS. 
-## 
-##     CI lower bound   mean median original CI upper bound stand. dev.
-## h=0         1.4998 1.8404 1.8279   1.8387         2.1793      0.2666
-## h=1         0.9262 1.3099 1.2961   1.3219         1.7087      0.3001
-## h=2         0.6249 0.9727 0.9722   0.9893         1.3395      0.2829
-## h=3         0.4321 0.7161 0.7221   0.7347         1.0283      0.2298
-## h=4         0.2943 0.5172 0.5164   0.5359         0.7577      0.1760
-## h=5         0.2089 0.3682 0.3605   0.3854         0.5454      0.1320
-## h=6         0.1410 0.2605 0.2548   0.2754         0.3943      0.0988
-## h=7         0.0934 0.1846 0.1800   0.1968         0.2846      0.0744
-## h=8         0.0620 0.1317 0.1292   0.1413         0.2069      0.0566</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>gIRF_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_gIRF</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shock =</span> <span class="st">&quot;BCS&quot;</span>, <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">summary</span>(gIRF_CI)</span></code></pre></div>
+<div class="result-table" role="region" tabindex="0" aria-label="BAC response to BCS: 80% confidence interval">
+<table>
+<caption>
+BAC response to BCS: 80% confidence interval
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+CI lower bound
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+median
+</th>
+<th style="text-align:right;">
+original
+</th>
+<th style="text-align:right;">
+CI upper bound
+</th>
+<th style="text-align:right;">
+stand. dev.
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+h=0
+</td>
+<td style="text-align:right;">
+1.4998
+</td>
+<td style="text-align:right;">
+1.8404
+</td>
+<td style="text-align:right;">
+1.8279
+</td>
+<td style="text-align:right;">
+1.8387
+</td>
+<td style="text-align:right;">
+2.1793
+</td>
+<td style="text-align:right;">
+0.2666
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=1
+</td>
+<td style="text-align:right;">
+0.9262
+</td>
+<td style="text-align:right;">
+1.3099
+</td>
+<td style="text-align:right;">
+1.2961
+</td>
+<td style="text-align:right;">
+1.3219
+</td>
+<td style="text-align:right;">
+1.7087
+</td>
+<td style="text-align:right;">
+0.3001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=2
+</td>
+<td style="text-align:right;">
+0.6249
+</td>
+<td style="text-align:right;">
+0.9727
+</td>
+<td style="text-align:right;">
+0.9722
+</td>
+<td style="text-align:right;">
+0.9893
+</td>
+<td style="text-align:right;">
+1.3395
+</td>
+<td style="text-align:right;">
+0.2829
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=3
+</td>
+<td style="text-align:right;">
+0.4321
+</td>
+<td style="text-align:right;">
+0.7161
+</td>
+<td style="text-align:right;">
+0.7221
+</td>
+<td style="text-align:right;">
+0.7347
+</td>
+<td style="text-align:right;">
+1.0283
+</td>
+<td style="text-align:right;">
+0.2298
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=4
+</td>
+<td style="text-align:right;">
+0.2943
+</td>
+<td style="text-align:right;">
+0.5172
+</td>
+<td style="text-align:right;">
+0.5164
+</td>
+<td style="text-align:right;">
+0.5359
+</td>
+<td style="text-align:right;">
+0.7577
+</td>
+<td style="text-align:right;">
+0.1760
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=5
+</td>
+<td style="text-align:right;">
+0.2089
+</td>
+<td style="text-align:right;">
+0.3682
+</td>
+<td style="text-align:right;">
+0.3605
+</td>
+<td style="text-align:right;">
+0.3854
+</td>
+<td style="text-align:right;">
+0.5454
+</td>
+<td style="text-align:right;">
+0.1320
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=6
+</td>
+<td style="text-align:right;">
+0.1410
+</td>
+<td style="text-align:right;">
+0.2605
+</td>
+<td style="text-align:right;">
+0.2548
+</td>
+<td style="text-align:right;">
+0.2754
+</td>
+<td style="text-align:right;">
+0.3943
+</td>
+<td style="text-align:right;">
+0.0988
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=7
+</td>
+<td style="text-align:right;">
+0.0934
+</td>
+<td style="text-align:right;">
+0.1846
+</td>
+<td style="text-align:right;">
+0.1800
+</td>
+<td style="text-align:right;">
+0.1968
+</td>
+<td style="text-align:right;">
+0.2846
+</td>
+<td style="text-align:right;">
+0.0744
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+h=8
+</td>
+<td style="text-align:right;">
+0.0620
+</td>
+<td style="text-align:right;">
+0.1317
+</td>
+<td style="text-align:right;">
+0.1292
+</td>
+<td style="text-align:right;">
+0.1413
+</td>
+<td style="text-align:right;">
+0.2069
+</td>
+<td style="text-align:right;">
+0.0566
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>You can visualize any of these bootstrapped IRFs directly with base
 R’s <code>plot()</code>/<code>polygon()</code>, using the
 <code>lower</code>, <code>original</code>, and <code>upper</code> fields
@@ -2542,6 +3770,12 @@ document.addEventListener("DOMContentLoaded", function () {
 .spillover-table tbody tr:nth-last-child(2) td { border-top: 2px solid #87253c; }
 .spillover-table tbody tr:last-child td { font-weight: 600; background: #f8f4f0; }
 .spillover-table:focus-visible { outline: 2px solid #87253c; outline-offset: 3px; }
+.result-table { width: 100%; overflow-x: auto; margin: 24px 0; }
+.result-table table { display: table; width: max-content; min-width: 100%; margin: 0; font-size: 13px; font-variant-numeric: tabular-nums; }
+.result-table caption { text-align: left; font-weight: 600; color: #87253c; padding-bottom: 10px; }
+.result-table th, .result-table td { padding: 7px 9px; text-align: right; }
+.result-table th:first-child, .result-table td:first-child { text-align: left; }
+.result-table:focus-visible { outline: 2px solid #87253c; outline-offset: 3px; }
 </style>
 
 
