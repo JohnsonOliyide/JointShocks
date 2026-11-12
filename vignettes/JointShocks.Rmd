@@ -1,0 +1,686 @@
+---
+title: "JointShocks R Package"
+author: "Johnson Oliyide and Thomas Wiesen"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{JointShocks R Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Purpose
+
+Economic interdependence and financial globalization have intensified the need for accurate measures of shock transmission across macroeconomic and financial systems. To this end, the **JointShocks** R package provides researchers and practitioners with robust tools to estimate the joint spillover metrics proposed in @LW2021 and  @LW2025.
+
+Additionally, it offers functionalities to compute the joint impulse response function and the joint forecast error variance decomposition introduced in @WB2024.
+
+For comparative purposes, the package also includes:
+
+- The **generalized spillover index** and metrics of @DY2012 and @DY2014, and
+- The **generalized impulse response function** and **generalized forecast error variance decomposition** of @KPP1996 and @PS1998.
+
+The goal of this package is to streamline the computation of these metrics-across both **full-sample** and **rolling window** applications-within a user-friendly and reproducible framework. It bridges theoretical contributions from the academic literature with accessible implementation tools for empirical work in macro-finance, banking, and monetary economics.
+
+
+
+The remainder of this documentation proceeds as follows: Section 2 briefly discusses the installation procedure. Section 3.1 provides and discusses the replication of key results from @WB2024, including the estimation of their Joint Impulse Response Functions (jIRFs). This involves implementing their bootstrap procedures, as well as computing the Generalized Impulse Response Functions (gIRFs) and the Generalized Forecast Error Variance Decomposition (gFEVD). Section 3.2 focuses on estimating the joint spillover metrics as developed in @LW2021 @LW2025 and the generalized spillover metrics in @DY2012 and @DY2014.
+
+
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+options(width = 80)
+
+# Wrap long lines of printed output so they don't run off the edge of the
+# page in the PDF version of this vignette.
+hook_output <- knitr::knit_hooks$get("output")
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(options$linewidth)) {
+    x <- knitr:::split_lines(x)
+    x <- ifelse(nchar(x) > options$linewidth,
+                strwrap(x, width = options$linewidth), x)
+    x <- paste(x, collapse = "\n")
+  }
+  hook_output(x, options)
+})
+knitr::opts_chunk$set(linewidth = 80)
+#install.packages("xfun")
+```
+
+# Installation Procedure
+
+To begin using the **JointShocks** package, install it from GitHub using the `devtools` package (only needed once):
+
+```{r, eval=FALSE}
+#install.packages("devtools")
+devtools::install_github("JohnsonOliyide/JointShocks")
+```
+
+Then load it as follows:
+
+```{r}
+library(JointShocks)
+```
+
+Because the package relies on vector autoregressions, be sure to load the `vars` package:
+
+```{r}
+
+library("vars")
+```
+
+## Loading your own data
+
+The package currently supports data files in `.csv` or `.xlsx` format. The first column must represent dates. To read `.xlsx` files, load the `readxl` package:
+
+```{r}
+library("readxl")
+```
+
+To load your own dataset, use the `read_data()` function, pointing it at the path to your file and specifying the format of the dates in your file's first column. For example, if you had a file called `"my_data.csv"` with dates formatted like `1/5/2017`, you would run:
+
+```{r, eval=FALSE}
+Data_date <- read_data("my_data.csv", date_format = "%m/%d/%Y")
+
+Data <- Data_date$Data
+date <- Data_date$date
+```
+
+This returns a list with `Data` (a matrix of your variables) and `date` (a vector of the corresponding dates), ready to be used with `vars::VAR()` and the rest of the functions in this package.
+
+## Sample data used in this vignette
+
+For replication, the remainder of this vignette uses datasets bundled with the package from @WB2024, which contain the volatility of eleven major banks from three different periods: pre-pandemic (1/5/2017-1/31/2020), pandemic (2/3/2020-2/3/2021), and full sample (1/5/2017-2/3/2021). The banks used are Bank of America (BAC), Bank of New York Mellon (BK), Barclays (BCS), Citigroup (C), Credit Suisse (CS), Deutsche Bank (DB), Goldman Sachs (GS), JP Morgan Chase (JPM), Morgan Stanley (MS), State Street (STT), and Wells Fargo (WFC).
+
+Load the pre-pandemic sample data as follows:
+```{r}
+
+data(Volatility_data_pre)
+
+Data <- Volatility_data_pre
+date <- attr(Volatility_data_pre, "date")
+```
+
+# Empirical Analysis
+
+## @WB2024 -The Joint Impulse Response Function and Joint Forecast Error Variance Decomposition 
+
+We refer users to @WB2024 for a complete explanation of the methodology and its empirical contributions.
+
+**Estimate a VAR model**
+```{r}
+#------------- Run a VAR model------
+# Estimate VAR with 1 lag, as used in the paper
+VAR_model <- VAR(Data, p = 1, type = "const")
+```
+
+
+### **Joint Impulse Response Function (jIRF)**
+
+To compute the joint impulse response function involving shocks from Barclays (BCS), Credit Suisse (CS), and Deutsche Bank (DB), run this:
+
+```{r}
+jIRF <- run_full_jIRF(VAR_model, from_set = c("BCS", "CS", "DB"), H = 8)
+```
+
+
+You can plot the jIRF response of Bank of America. The result it produces shows how the equity market of Bank of America respond over the next eight days to a joint, simultaneous one standard deviation shocks from Barclays, Credit Suisse and Deutsche Banks. Since `jIRF` is a labeled matrix, we can plot it directly using base R:
+
+```{r}
+# Plot jIRF for specific response
+horizon <- 0:8
+plot(horizon, jIRF["BAC", ], type = "l", lwd = 3, col = "#33a02c",
+     xlab = "Horizon", ylab = "Response",
+     main = "Joint IRF: Response of BAC to Joint Shock",
+     cex.main = 1.3, cex.lab = 1.1, cex.axis = 0.95)
+abline(h = 0, col = "gray40", lty = 2)
+grid()
+```
+
+
+If you're interested in the gIRF of @PS1998 without confidence bounds, run:
+```{r}
+gIRF <- run_full_gIRF(VAR_model, H = 8) # Run the gIRF
+
+```
+
+This returns the entire set of gIRF results, showing how each variable responds to a one-standard-deviation shock in every other variable.
+
+To visualize a specific response-shock pair — for instance, the effect of a shock from Barclays on Bank of America:
+
+```{r}
+plot(horizon, gIRF["BAC", "BCS", ], type = "l", lwd = 3, col = "#1f78b4",
+     xlab = "Horizon", ylab = "Response",
+     main = "Response of BAC to Shock in BCS",
+     cex.main = 1.3, cex.lab = 1.1, cex.axis = 0.95)
+abline(h = 0, col = "gray40", lty = 2)
+grid()
+```
+
+
+
+You may compare the jIRF against individual gIRFs using:
+
+```{r}
+# Combined IRFs as in jIRF paper
+from_set <- c("BCS", "CS", "DB")
+g_colors <- c("blue", "orange", "purple")
+j_color <- "black"
+g_vals_list <- lapply(from_set, function(s) gIRF["BAC", s, ])
+y_range <- range(c(unlist(g_vals_list), jIRF["BAC", ]))
+plot(horizon, jIRF["BAC", ], type = "n",
+     ylim = y_range, xlab = "Horizon", ylab = "Response",
+     main = "IRFs: BAC to Joint & Individual Shocks",
+     cex.main = 1.3, cex.lab = 1.1, cex.axis = 0.95)
+for (i in seq_along(from_set)) {
+  lines(horizon, g_vals_list[[i]], col = g_colors[i], lwd = 2.5, lty = 1)
+}
+lines(horizon, jIRF["BAC", ], col = j_color, lwd = 2.5, lty = 2)
+abline(h = 0, col = "gray40", lty = 2)
+legend("topright", legend = c(paste0("gIRF: ", from_set), "jIRF"),
+       col = c(g_colors, j_color), lty = c(rep(1, length(from_set)), 2), lwd = 2.5, cex = 0.85)
+grid()
+```
+
+Note: To explore a different set of shock contributors, rerun `run_full_jIRF()` with a new `from_set` and recompute `jIRF`/`gIRF` before re-plotting.
+
+
+### **Joint Forecast Error Variance Decomposition (jFEVD)**
+Users of this package can also calculate the joint forecast error variance decomposition (jFEVD) of @WB2024.  This jFEVD measures the proportion of a variable's forecast error variance that can be jointly explained by a specified set of multiple shocks.
+
+We recommend referring to @WB2024 for a detailed explanation of the model's theoretical advantages and empirical applications.
+
+To illustrate, the jFEVD result can be interpreted as follows: approximately **16%** of the \(H\)=30 step forecast error variance of **Bank of America (BAC)** is attributable to joint shocks from **Barclays (BCS)**, **Credit Suisse (CS)**, and **Deutsche Bank (DB)**.
+
+```{r}
+#-------------Joint FEVD------
+# Run and present jFEVD result
+jfevd <- run_full_jFEVD(VAR_model, from_set = c("BCS", "CS", "DB"), H = 30)
+jfevd
+```
+
+### **Generalized Forecast Error Variance Decomposition (gFEVD)**
+
+Another important concept is the **gFEVD** of @KPP1996 and @PS1998. This decomposition is embedded in the `genspill()` function and captures how shocks in one variable contribute to the forecast error variance of another.
+
+While the `genspill()` function produces several outputs (fully discussed in Section 3.2), our current interest is solely in the `gFEVD` matrix.
+
+Each element \((i,j)\) of the matrix quantifies the proportion of the \(H\)-step forecast error variance of variable \(i\) that can be attributed to shocks originating from variable \(j\).  
+For instance, using pre-pandemic data, the gFEVD results suggest that **7.2%** of Bank of America's forecast error variance is explained by shocks from **Barclays (BCS)**, and about **6%** by shocks from **Deutsche Bank (DB)**.
+
+```{r}
+genspill_results <- genspill(VAR_model, H = 30)
+genspill_results$gFEVD
+
+```
+
+
+
+### **Bootstrapping**
+
+The interpretations provided above remain valid; however, bootstrapping allows us to compute **confidence intervals** around the impulse response functions, adding a layer of statistical inference.
+
+Bootstrapping is split into four functions. First, `bootstrap_VAR()` bootstraps the VAR model itself, saving the constant, VAR coefficient matrices, and shock covariance matrix for each of `B` iterations. The first iteration is always the original (non-resampled) fitted parameters, so the original IRF can be recovered alongside the bootstrap distribution. Then, `bootstrap_gIRF()`, `bootstrap_jIRF()`, and `bootstrap_gIRF_sum()` each take the bootstrapped VAR parameters and compute confidence intervals for the generalized IRF, joint IRF, and sum of generalized IRFs, respectively — for whichever `response` variable you request.
+
+Make sure you have sufficient memory available, as bootstrapping can be computationally intensive depending on the number of iterations (`B`). The default is `B = 10000`, and the default confidence interval is 90%, but you can set any desired level using the `CI` argument.
+
+In the example below, we bootstrap the VAR with 500 iterations.
+
+```{r}
+# B is the number of bootstrap iterations (default = 10000)
+# VAR_model is the object estimated using the VAR function
+boot_model <- bootstrap_VAR(VAR_model, B = 500)
+```
+
+With `boot_model` computed once, we can now compute the bootstrapped confidence interval for the jIRF, the gIRF sum, or an individual gIRF, for any response variable, without re-running the bootstrap each time.
+
+**Joint IRF (jIRF) with confidence interval**
+
+```{r}
+# response is the response variable
+# shocks is the set of variables where the joint shocks originate
+# H is the H-step ahead
+# CI sets the confidence interval level (default = 0.90)
+jIRF_CI <- bootstrap_jIRF(boot_model, response = "BAC", shocks = c("BCS", "CS", "DB"),
+                           H = 8, CI = 0.80)
+summary(jIRF_CI)
+```
+
+**Sum of generalized IRFs (gIRF sum) with confidence interval**
+
+```{r}
+gIRF_sum_CI <- bootstrap_gIRF_sum(boot_model, response = "BAC", shocks = c("BCS", "CS", "DB"),
+                                   H = 8, CI = 0.80)
+summary(gIRF_sum_CI)
+```
+
+**A single generalized IRF (gIRF) with confidence interval**
+
+```{r}
+# shock is the single variable where the shock originates
+gIRF_CI <- bootstrap_gIRF(boot_model, response = "BAC", shock = "BCS", H = 8, CI = 0.80)
+summary(gIRF_CI)
+```
+
+You can visualize any of these bootstrapped IRFs directly with base R's `plot()`/`polygon()`, using the `lower`, `original`, and `upper` fields returned by each function. In all of the examples below, the shaded region shows the 80% confidence interval, and the solid/dashed line shows the original (non-bootstrapped) IRF.
+
+```{r}
+horizon <- 0:jIRF_CI$H
+plot(horizon, jIRF_CI$original, type = "n",
+     ylim = range(c(jIRF_CI$lower, jIRF_CI$upper)),
+     xlab = "h steps ahead", ylab = "Responses",
+     main = "jIRF: Response of BAC due to joint shocks from BCS, CS, and DB")
+polygon(c(horizon, rev(horizon)), c(jIRF_CI$lower, rev(jIRF_CI$upper)),
+        col = adjustcolor("black", alpha.f = 0.2), border = NA)
+lines(horizon, jIRF_CI$original, col = "black", lwd = 2.5, lty = 2)
+abline(h = 0, col = "gray40", lty = 2)
+grid()
+legend("topright", legend = "jIRF", col = "black", lty = 2, lwd = 2.5, cex = 0.85)
+```
+
+```{r}
+horizon <- 0:gIRF_sum_CI$H
+plot(horizon, gIRF_sum_CI$original, type = "n",
+     ylim = range(c(gIRF_sum_CI$lower, gIRF_sum_CI$upper)),
+     xlab = "h steps ahead", ylab = "Responses",
+     main = "gIRF sum: Response of Bank of America")
+polygon(c(horizon, rev(horizon)), c(gIRF_sum_CI$lower, rev(gIRF_sum_CI$upper)),
+        col = adjustcolor("purple", alpha.f = 0.25), border = NA)
+lines(horizon, gIRF_sum_CI$original, col = "purple", lwd = 2.5, lty = 1)
+abline(h = 0, col = "gray40", lty = 2)
+grid()
+legend("topright", legend = "Sum of gIRFs", col = "purple", lty = 1, lwd = 2.5, cex = 0.85)
+```
+
+```{r}
+horizon <- 0:gIRF_CI$H
+plot(horizon, gIRF_CI$original, type = "n",
+     ylim = range(c(gIRF_CI$lower, gIRF_CI$upper)),
+     xlab = "h steps ahead", ylab = "Responses",
+     main = "gIRF: Response of BAC due to a shock from BCS alone")
+polygon(c(horizon, rev(horizon)), c(gIRF_CI$lower, rev(gIRF_CI$upper)),
+        col = adjustcolor("purple", alpha.f = 0.25), border = NA)
+lines(horizon, gIRF_CI$original, col = "purple", lwd = 2.5, lty = 1)
+abline(h = 0, col = "gray40", lty = 2)
+grid()
+legend("topright", legend = "gIRF: BCS", col = "purple", lty = 1, lwd = 2.5, cex = 0.85)
+```
+
+### **Replicating Figure 3 of @WB2024**
+
+We can replicate the pre-pandemic column of Figure 3 of @WB2024, which shows the jIRF (with confidence interval), the three individual gIRFs, and the sum of gIRFs, due to joint shocks from Barclays (BCS), Credit Suisse (CS), and Deutsche Bank (DB), for a given response variable.
+
+
+
+```{r}
+plot_fig3_panel <- function(boot_model, response, main) {
+  shocks <- c("BCS", "CS", "DB")
+  H <- 8
+  CI <- 0.80
+  horizon <- 0:H
+
+  jIRF_CI <- bootstrap_jIRF(boot_model, response = response, shocks = shocks,
+                             H = H, CI = CI)
+  gIRF_sum_CI <- bootstrap_gIRF_sum(boot_model, response = response, shocks = shocks,
+                                     H = H, CI = CI)
+  gIRF_list <- lapply(shocks, function(s) {
+    bootstrap_gIRF(boot_model, response = response, shock = s, H = H, CI = CI)
+  })
+
+  g_colors <- c("blue", "red", "darkgreen")
+  g_ltys <- c(3, 2, 4)
+
+  y_range <- range(c(jIRF_CI$lower, jIRF_CI$upper,
+                      gIRF_sum_CI$lower, gIRF_sum_CI$upper,
+                      sapply(gIRF_list, function(g) range(g$lower, g$upper))))
+
+  plot(horizon, jIRF_CI$original, type = "n", xlim = c(0, H), ylim = y_range,
+       xlab = "h steps ahead", ylab = "impulse response", main = main,
+       cex.main = 1.1, cex.lab = 0.95, cex.axis = 0.9)
+
+  polygon(c(horizon, rev(horizon)), c(gIRF_sum_CI$lower, rev(gIRF_sum_CI$upper)),
+          col = adjustcolor("tan", alpha.f = 0.5), border = NA)
+  polygon(c(horizon, rev(horizon)), c(jIRF_CI$lower, rev(jIRF_CI$upper)),
+          col = adjustcolor("gray50", alpha.f = 0.5), border = NA)
+
+  lines(horizon, gIRF_sum_CI$original, col = "#9A6324", lwd = 2)
+  lines(horizon, jIRF_CI$original, col = "black", lwd = 2, type = "o", pch = 16)
+  for (i in seq_along(shocks)) {
+    lines(horizon, gIRF_list[[i]]$original, col = g_colors[i], lwd = 2, lty = g_ltys[i])
+  }
+  abline(h = 0, col = "black", lty = 2)
+
+  legend("topright", cex = 0.6,
+         legend = c("jIRF: shocks from BCS, CS, & DB", "80% CI for jIRF",
+                    "gIRF: shock from BCS", "gIRF: shock from CS", "gIRF: shock from DB",
+                    "sum of gIRFs", "80% CI for sum of gIRFs"),
+         col = c("black", "gray50", g_colors, "#9A6324", "tan"),
+         lty = c(1, NA, g_ltys, 1, NA),
+         lwd = c(2, NA, 2, 2, 2, 2, NA),
+         pch = c(16, NA, NA, NA, NA, NA, NA),
+         fill = c(NA, adjustcolor("gray50", alpha.f = 0.5), NA, NA, NA, NA,
+                  adjustcolor("tan", alpha.f = 0.5)),
+         border = NA, merge = TRUE, seg.len = 2)
+}
+```
+
+Now produce the first panel of Figure 3's pre-pandemic column, the pre-pandemic impulse response of Bank of America:
+
+```{r, fig.width=6, fig.height=5}
+plot_fig3_panel(boot_model, "BAC", "Pre-Pandemic Impulse Response of Bank of America")
+```
+
+The remaining panels of Figure 3 (Citigroup and JP Morgan Chase) can be reproduced the same way, by calling `plot_fig3_panel()` with `response = "C"` or `response = "JPM"`.
+
+## @LW2021 and @LW2025 - Joint Spillover Metrics
+
+We refer users to the works of @LW2021 and @LW2025 to understand the concept of **joint spillover metrics**, and to @DY2012 and @DY2014 for the **generalized variant**.
+
+As with the joint impulse response function and the joint forecast error variance decomposition (from section 3.1), you must estimate a K-variable VAR model first before computing the (non rolling window) spillover metrics.  As illustrated previously, say you want to load the pre-pandemic bank volatility data from @WB2024.  For more information about this dataset, see section 3.1.
+
+
+```{r}
+#Load and prepare the data as follows:
+data(Volatility_data_pre)
+
+Data <- Volatility_data_pre
+date <- attr(Volatility_data_pre, "date")
+```
+
+
+```{r}
+#------------- Run a VAR model------
+# Estimate VAR with 1 lag, as used in the paper
+VAR_model <- VAR(Data, p = 1, type = "const")
+```
+
+
+Once the VAR_model object above is available, the `jointspill()` function can be used to compute the joint spillover metrics.
+
+The `jointspill()` function produces the following results:
+
+1. The K x K **gFEVD matrix** (`gFEVD`)
+2. The **joint total spillover from all others to variable *i*** (`jnt_from_others_to_i`)
+3. The **joint total spillover from variable *i* to all others** (`jnt_to_others_from_i`)
+4. The **joint net total spillover** (`jnt_net`)
+5. The **joint spillover index** (`jSOI`)
+6. The **lambda scaling factor** (`lambda`)
+7. The **scaled gFEVD matrix** (`gFEVD_tilde`)
+
+As before, `H` denotes the number of forecast periods ahead (i.e., the forecast horizon).
+
+```{r}
+jointspill_results <- jointspill(VAR_model, H = 30)
+
+```
+
+If users want to extract any of the seven outputs calculated by `jointspill()`, they can use the `$` extraction operator. For example, `jointspill_results$gFEVD` returns the K x K generalized forecast error variance decomposition (gFEVD) matrix.
+
+Additionally, users can easily view outputs (1) through (5) using the generic `summary()` function. This summary presents a well-structured table:
+
+- The upper-left K x K portion contains the gFEVD matrix.
+- The last column shows the **joint total spillover from all others** to each variable (*jnt_from_others_to_i*).
+- The second-to-last row displays the **joint total spillover from each variable to all others** (*jnt_to_others_from_i*).
+- The final row contains the **joint net total spillovers** (*jnt_net*).
+- The **joint spillover index (jSOI)** is reported in the bottom-right corner of the table.
+
+This summary can be generated using:
+
+
+```{r}
+summary(jointspill_results)
+
+```
+
+As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gFEVD matrix) implies that 19.34% of Bank of America's (BAC) forecast error variance can be explained by the shocks of Bank of New York Mellon (BK).  The first value in the "FROM Others" column (the first element of **jnt_from_others_to_i**) implies that 82.64% of Bank of America's forecast error variance can be jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of **jnt_to_others_from_i**) implies that the joint total spillover from Bank of America to the other ten banks is 95.07%.  Note that this value can exceed 100%.  The first value in the "Net" row (the first element of **jnt_net**) implies that the joint net total spillover for Bank of America is 12.43%.  Because this value is positive, Bank of America transmits more shocks to others banks than it receives.  Lastly, the value in the bottom-right is the joint spillover index (**jSOI**).  This indicates that, on average, 58.15% of a bank's forecast error variance can be explained by jointly conditioning on the shocks of the other ten banks in the model.
+
+
+Similar to the joint spillover results, the generalized spillover metrics of @DY2012 and @DY2014 can also be estimated using the `genspill()` function.
+
+This function returns the following outputs:
+
+1. The K x K generalized spillover table (**gSOT**)
+2. The generalized total spillover **from all others** to variable *i* (**gen_from_others_to_i**)
+3. The generalized total spillover **from variable *i*** to all others (**gen_to_others_from_i**)
+4. The **generalized net** total spillover (**gen_net**)
+5. The **generalized spillover index** (**gSOI**)
+
+You can compute these metrics by running:
+```{r}
+#Compute the generalized spillover results using the estimated VAR model
+#with a time horizon of H=30.
+genspill_results <- genspill(VAR_model, H = 30)
+
+```
+
+As in @DY2012 and @DY2014, users can use the generic `summary()` function to generate a summarized version of the generalized spillover results.
+
+- The **upper-left K x K** part of the table represents the **gSOT matrix**.
+- The **last column** shows the generalized total spillover **from all others** to each variable.
+- The **second-to-last row** displays the generalized total spillover **to all others** from each variable.
+- The **last row** contains the generalized **net** total spillover.
+- The **bottom-right** cell presents the overall **generalized spillover index (gSOI)**.
+ 
+
+```{r}
+summary(genspill_results)
+```
+
+As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gSOT matrix) shows the generalized bilateral spillover from Bank of New York Mellon (BK) to Bank of America (BAC) is 4.43%.  Because of the row-sum normalization used by DY [@DY2012;@DY2014], this 4.43% is NOT the same thing as the percent of Bank of America's forecast error variance explained by the shocks of Bank of New York Mellon.  The first value in the "FROM Others" column (the first element of gen_from_others_to_i) shows the generalized total spillover from the other ten banks to Bank of America is 78.60%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 78.60% is NOT the same thing as the percent of Bank of America's forecast error variance jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of gen_to_others_from_i) shows the generalized total spillover from Bank of America to the other ten banks is 112.31%.  The first value in the "Net" row (the first element of gen_net) implies that the generalized net total spillover for Bank of America is 33.72%.  Lastly, the value in the bottom-right is the generalized spillover index (gSOI) of 69.15%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 69.15% is not the same thing as the average percent of a bank's forecast error variance jointly explained by the shocks of the other ten banks in the model.
+
+
+
+
+
+
+### **Rolling Window Analyses**
+
+To perform rolling window analyses for either the **joint spillover metrics** or its **generalized variant**, users must first estimate a rolling window VAR model. The parameter `win` specifies the window size. For example, the following line of code will estimate a rolling window VAR model of one lag and a window length of 150 periods using the pre-pandemic bank volatility data from previous sections
+
+
+```{r}
+# p is the lag
+# win is the window size
+# const is TRUE if you want to include a constant, or FALSE if not.
+# dates is the date vector extracted earlier (attr(Volatility_data_pre, "date"));
+# VAR_roll() uses it (together with win) to compute the end-of-window date for each
+# rolling window, which is carried through as end_of_window_date in its output.
+rolling_model <- VAR_roll(data = Data, p = 1, win = 150, const = TRUE, dates = date)
+
+```
+
+
+If users want to extract any of the four outputs produced by the `VAR_roll()` function, they can do so using the `$` extraction operator. The available components are:
+
+1. `VARcoeff` - VAR coefficient matrices for each rolling window
+2. `constant` - Intercepts for each rolling window
+3. `Sigma` - Residual (shock) covariance matrices for each rolling window
+4. `end_of_window_date` - The end-of-window date for each rolling window, computed from the `dates` and `win` inputs
+
+
+For example, `rolling_model$VARcoeff` will return the rolling VAR coefficients.
+
+
+Compute the joint spillover results using the rolling window VAR model with a forecast horizon `H`.
+The `dates` input to `VAR_roll()` should be the date vector extracted earlier (`date <- attr(Volatility_data_pre, "date")`). The "date" input should not be truncated or shortened. The R code uses the `win` input together with `dates` to calculate the end-of-window date for each rolling window.
+
+
+
+```{r}
+# H is the horizon.
+# jointspill_roll() carries the end-of-window dates through from rolling_model
+# (computed by VAR_roll() using the win input), so no separate dates argument is needed.
+joint_spill_results_roll <- jointspill_roll(rolling_model, H = 30)
+
+```
+
+
+As an example, if users wish to plot the jSOI over rolling windows, they can run the following.
+```{r}
+#Plot the joint spillover index over rolling windows.
+plot(joint_spill_results_roll$end_of_window_date, joint_spill_results_roll$jSOI, 
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(joint_spill_results_roll$jSOI),
+     xlab = "End of window date", ylab = "jSOI",
+     main = "jSOI over rolling windows")
+
+```
+
+
+If users wish to plot the 1,2 element of the gFEVD matrix (the percent of Bank of America's forecast error variance explained by the shocks of Bank of New York Mellon) over rolling windows, they can run the following
+```{r}
+#Plot the 1,2 element of the gFEVD matrix over the rolling windows.
+#This is the fraction of the forecast error variance of BAC
+#that can be explained by the shocks of BK over rolling windows.
+
+plot(joint_spill_results_roll$end_of_window_date,
+     joint_spill_results_roll$gFEVD["BAC","BK",], type = "l", col = "blue", lwd = 1,
+     ylim = range(joint_spill_results_roll$gFEVD["BAC","BK",]),
+     xlab = "End of window date", ylab = "",
+     main = "Spillover from BK to BAC")
+
+
+```
+
+If users wish to plot the joint total spillover from all other banks to Bank of America over rolling windows, they can run the following.
+
+```{r}
+##Plot the joint total spillover from all others to BAC over
+#rolling windows.
+
+plot(joint_spill_results_roll$end_of_window_date,
+     joint_spill_results_roll$jnt_from_others_to_i["BAC",],
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(joint_spill_results_roll$jnt_from_others_to_i["BAC",]),
+     xlab = "End of window date", ylab = "",
+     main = "Joint Spillover From Others to BAC")
+```
+
+
+If users wish to plot the joint total spillover from Bank of New York Mellon to the other banks over rolling windows, they can run the following.
+
+```{r}
+
+###Plot the joint total spillover to all others from BK over
+#rolling windows.
+plot(joint_spill_results_roll$end_of_window_date,
+     joint_spill_results_roll$jnt_to_others_from_i["BK",],
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(joint_spill_results_roll$jnt_to_others_from_i["BK",]),
+     xlab = "End of window date", ylab = "",
+     main = "Joint Spillover to Others from BK")
+
+
+```
+
+If users wish to plot the joint net total spillover for Barclays over rolling windows, they can run the following.
+
+```{r}
+#Plot the joint net total spillover for BCS over rolling windows.
+plot(joint_spill_results_roll$end_of_window_date,
+     joint_spill_results_roll$jnt_net["BCS",], type = "l", col = "blue", lwd = 1,
+     ylim = range(joint_spill_results_roll$jnt_net["BCS",]),
+     xlab = "End of window date", ylab = "",
+     main = "Joint Net Total Spillover for BCS")
+
+```
+
+The command `genspill_roll()` can be used to compute the generalized spillover metrics over rolling windows.  Notice that the arguments of the `genspill_roll()` command are:
+
+
+1. `rolling_model` - the rolling window VAR object
+2. `H` - the forecast error horizon
+
+Like `jointspill_roll()`, the end-of-window dates are carried through from `rolling_model`, so there is no separate `dates` argument.
+
+```{r}
+#--------------- Diebold-Yilmaz Spillover rolling window-------
+##Compute the generalized spillover results using the rolling window VAR
+#model with a time horizon of H=30.
+gen_spill_result_roll <- genspill_roll(rolling_model, H = 30)
+
+
+```
+
+As an example, if users wish to plot the gSOI over rolling windows, they can run the following
+
+```{r}
+#Plot the generalized spillover index over rolling windows.
+plot(gen_spill_result_roll$end_of_window_date, gen_spill_result_roll$gSOI, 
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(gen_spill_result_roll$gSOI),
+     xlab = "End of window date", ylab = "gSOI",
+     main = "gSOI over rolling windows")
+
+```
+
+
+If users wish to plot the 1,2 element of the gSOT matrix (generalized bilateral spillover to Bank of America from Bank of New York Mellon) over rolling windows, they can run the following
+```{r}
+#Plot the 1,2 element of the gSOT matrix over the rolling windows.
+#This is the generalized bilateral spillover from BK to BAC over rolling windows.
+
+plot(gen_spill_result_roll$end_of_window_date,
+     gen_spill_result_roll$gSOT["BAC","BK",],
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(gen_spill_result_roll$gSOT["BAC","BK",]),
+     xlab = "End of window date", ylab = "",
+     main = "Spillover from BK to BAC")
+
+
+```
+
+If users wish to plot the generalized total spillover from all other banks to Bank of America over rolling windows, they can run the following.
+
+```{r}
+##Plot the generalized total spillover from all others to BAC over
+#rolling windows.
+
+plot(gen_spill_result_roll$end_of_window_date,
+     gen_spill_result_roll$gen_from_others_to_i["BAC",],
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(gen_spill_result_roll$gen_from_others_to_i["BAC",]),
+     xlab = "End of window date", ylab = "",
+     main = "Generalized Spillover From Others to BAC")
+```
+
+
+If users wish to plot the generalized total spillover from Bank of New York Mellon to the other banks over rolling windows, they can run the following
+
+```{r}
+
+###Plot the generalized total spillover to all others from BK over
+#rolling windows.
+plot(gen_spill_result_roll$end_of_window_date,
+     gen_spill_result_roll$gen_to_others_from_i["BK",],
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(gen_spill_result_roll$gen_to_others_from_i["BK",]),
+     xlab = "End of window date", ylab = "",
+     main = "Generalized Spillover to Others from BK")
+
+```
+
+If users wish to plot the generalized net total spillover for Barclays over rolling windows, they can run the following.
+```{r}
+#Plot the generalized net total spillover for BCS over rolling windows.
+plot(gen_spill_result_roll$end_of_window_date,
+     gen_spill_result_roll$gen_net["BCS",],
+     type = "l", col = "blue", lwd = 1,
+     ylim = range(gen_spill_result_roll$gen_net["BCS",]),
+     xlab = "End of window date", ylab = "",
+     main = "Net Total Spillover for BCS")
+
+```
+
+#References
+

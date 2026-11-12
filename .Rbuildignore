@@ -1,0 +1,25 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^references\.bib$
+^Code_jointshock\.R$
+^test_functions_TW\.R$
+^test_JointShocks_install\.R$
+^Asian market_weekly_volatility_updated\(NO_labels\)\.csv$
+^Asian market_weekly_volatility_updated\(with labels\)\.xlsx$
+^JointShocks with comments \(8-12-2025\)\.pdf$
+^JointShocks\.Rmd$
+^JointShocks\.html$
+^JointShocks\.pdf$
+^JointShocks_v1\.Rmd$
+^JointShocks_v1\.pdf$
+^JointShocks_v1_files$
+^JointShocks_files$
+^YZ-vol-No_labels_No_EPCA_No_EIND\.csv$
+^YZ-vol-WITH_labels_No_EPCA_No_EIND\.csv$
+^jIRF_gIRF_jFEVD_gFEVD\.Rmd$
+^jIRF_gIRF_jFEVD_gFEVD\.html$
+^jIRF_gIRF_jFEVD_gFEVD\.pdf$
+^jIRF_gIRF_jFEVD_gFEVD_files$
+^doc$
+^Meta$

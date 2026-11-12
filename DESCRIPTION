@@ -1,0 +1,30 @@
+Package: JointShocks
+Type: Package
+Title: Joint and Generalized Impulse Response Functions and Spillover Metrics for VAR Models
+Version: 0.1.0
+Authors@R: c(
+    person("Johnson", "Oliyide", email = "oliyide.ayobamij@gmail.com", role = c("aut", "cre")),
+    person("Thomas", "Wiesen", role = "aut"))
+Author: Johnson Oliyide [aut, cre], Thomas Wiesen [aut]
+Maintainer: Johnson Oliyide <oliyide.ayobamij@gmail.com>
+Description: Provides tools to estimate the joint spillover metrics of
+    Lastrapes and Wiesen (2021, 2025), the joint impulse response function
+    and joint forecast error variance decomposition of Wiesen and Beaumont
+    (2024), and the generalized spillover index, generalized impulse
+    response function, and generalized forecast error variance
+    decomposition of Diebold and Yilmaz (2012, 2014) and Koop, Pesaran, and
+    Potter (1996) / Pesaran and Shin (1998), for vector autoregressive (VAR)
+    models, over both full-sample and rolling-window applications.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    vars
+Suggests:
+    readxl,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.3.3
+Depends: 
+    R (>= 3.5)
