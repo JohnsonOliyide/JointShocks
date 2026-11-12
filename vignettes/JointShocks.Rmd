@@ -83,13 +83,14 @@ result_table <- function(tab, caption, css_class = "result-table", digits = 4) {
                                 align = rep("r", ncol(tab)), caption = caption)))
     cat("\n</div>\n")
   } else {
-    cat("\\begin{center}\n\\textbf{", caption, "}\\par\\smallskip\n",
+    caption <- gsub("%", "\\%", caption, fixed = TRUE)
+    cat("\n```{=latex}\n\\begin{center}\n\\textbf{", caption, "}\\par\\smallskip\n",
         "\\sbox0{%\n", sep = "")
     cat(as.character(knitr::kable(tab, format = "latex", escape = TRUE,
                                 align = rep("r", ncol(tab)))))
     cat("\n}\n\\ifdim\\wd0>\\linewidth\n",
         "\\resizebox{\\linewidth}{!}{\\usebox0}\n",
-        "\\else\\usebox0\\fi\n\\end{center}\n", sep = "")
+        "\\else\\usebox0\\fi\n\\end{center}\n```\n", sep = "")
   }
   invisible(tab)
 }
