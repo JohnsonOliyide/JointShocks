@@ -243,7 +243,7 @@ Make sure you have sufficient memory available, as bootstrapping can be computat
 
 The examples below use 500 iterations to keep the tutorial quick to run and a fixed random seed for reproducibility. For empirical work, assess whether more iterations are needed for stable confidence bounds. All plotted confidence intervals below use `CI = 0.80`.
 
-```{r}
+```{r, results="hide"}
 # B is the number of bootstrap iterations (default = 10000)
 # VAR_model is the object estimated using the VAR function
 boot_model <- bootstrap_VAR(VAR_model, B = 500)
@@ -449,7 +449,7 @@ summary(jointspill_results)
 
 ```
 
-As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gFEVD matrix) implies that 19.34% of Bank of America's (BAC) forecast error variance can be explained by the shocks of Bank of New York Mellon (BK).  The first value in the "FROM Others" column (the first element of **jnt_from_others_to_i**) implies that 82.64% of Bank of America's forecast error variance can be jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of **jnt_to_others_from_i**) implies that the joint total spillover from Bank of America to the other ten banks is 95.07%.  Note that this value can exceed 100%.  The first value in the "Net" row (the first element of **jnt_net**) implies that the joint net total spillover for Bank of America is 12.43%.  Because this value is positive, Bank of America transmits more shocks to other banks than it receives.  Lastly, the value in the bottom-right is the joint spillover index (**jSOI**).  This indicates that, on average, 58.15% of a bank's forecast error variance can be explained by jointly conditioning on the shocks of the other ten banks in the model.
+As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gFEVD matrix) implies that 19.34% of Bank of America's (BAC) forecast error variance can be explained by the shocks of Bank of New York Mellon (BK).  The first value in the "FROM Others" column (the first element of **jnt_from_others_to_i**) implies that 82.64% of Bank of America's forecast error variance can be jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of **jnt_to_others_from_i**) implies that the joint total spillover from Bank of America to the other ten banks is 95.07%.  Note that this value can exceed 100%.  The first value in the "Net" row (the first element of **jnt_net**) implies that the joint net total spillover for Bank of America is 12.43 percentage points.  Because this value is positive, Bank of America transmits more shocks to other banks than it receives.  Lastly, the value in the bottom-right is the joint spillover index (**jSOI**).  This indicates that, on average, 58.15% of a bank's forecast error variance can be explained by jointly conditioning on the shocks of the other ten banks in the model.
 
 
 Similar to the joint spillover results, the generalized spillover metrics of @DY2012 and @DY2014 can also be estimated using the `genspill()` function.
@@ -483,7 +483,7 @@ As in @DY2012 and @DY2014, users can use the generic `summary()` function to gen
 summary(genspill_results)
 ```
 
-As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gSOT matrix) shows the generalized bilateral spillover from Bank of New York Mellon (BK) to Bank of America (BAC) is 4.43%.  Because of the row-sum normalization used by DY [@DY2012;@DY2014], this 4.43% is NOT the same thing as the percent of Bank of America's forecast error variance explained by the shocks of Bank of New York Mellon.  The first value in the "FROM Others" column (the first element of gen_from_others_to_i) shows the generalized total spillover from the other ten banks to Bank of America is 78.60%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 78.60% is NOT the same thing as the percent of Bank of America's forecast error variance jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of gen_to_others_from_i) shows the generalized total spillover from Bank of America to the other ten banks is 112.31%.  The first value in the "Net" row (the first element of gen_net) implies that the generalized net total spillover for Bank of America is 33.72%.  Lastly, the value in the bottom-right is the generalized spillover index (gSOI) of 69.15%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 69.15% is not the same thing as the average percent of a bank's forecast error variance jointly explained by the shocks of the other ten banks in the model.
+As an example to interpret the results, the value in the first row and second column (the 1,2 element of the gSOT matrix) shows the generalized bilateral spillover from Bank of New York Mellon (BK) to Bank of America (BAC) is 4.43%.  Because of the row-sum normalization used by DY [@DY2012;@DY2014], this 4.43% is NOT the same thing as the percent of Bank of America's forecast error variance explained by the shocks of Bank of New York Mellon.  The first value in the "FROM Others" column (the first element of gen_from_others_to_i) shows the generalized total spillover from the other ten banks to Bank of America is 78.60%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 78.60% is NOT the same thing as the percent of Bank of America's forecast error variance jointly explained by the shocks of the other ten banks in the model.  The first value in the "TO Others" row (the first element of gen_to_others_from_i) shows the generalized total spillover from Bank of America to the other ten banks is 112.31%.  The first value in the "Net" row (the first element of gen_net) implies that the generalized net total spillover for Bank of America is 33.72 percentage points.  Lastly, the value in the bottom-right is the generalized spillover index (gSOI) of 69.15%.  Because of the row-sum normalization and single-variable conditioning sets used by DY [@DY2012;@DY2014], this 69.15% is not the same thing as the average percent of a bank's forecast error variance jointly explained by the shocks of the other ten banks in the model.
 
 
 
@@ -495,7 +495,7 @@ As an example to interpret the results, the value in the first row and second co
 To perform rolling window analyses for either the **joint spillover metrics** or its **generalized variant**, users must first estimate a rolling window VAR model. The parameter `win` specifies the window size. For example, the following line of code will estimate a rolling window VAR model of one lag and a window length of 150 periods using the pre-pandemic bank volatility data described above.
 
 
-```{r}
+```{r, results="hide"}
 # p is the lag
 # win is the window size
 # const is TRUE if you want to include a constant, or FALSE if not.
@@ -532,28 +532,30 @@ joint_spill_results_roll <- jointspill_roll(rolling_model, H = 30)
 ```
 
 
+The rolling `gFEVD` output is expressed in percentages, whereas `genspill_results$gFEVD` above contains proportions. The spillover indices and directional spillovers are also expressed in percentages; net spillovers are differences in percentage points.
+
 As an example, if users wish to plot the jSOI over rolling windows, they can run the following.
 ```{r, fig.cap="Joint spillover index over rolling windows of 150 observations.", fig.alt="Joint spillover index over rolling windows of 150 observations."}
 #Plot the joint spillover index over rolling windows.
 plot(joint_spill_results_roll$end_of_window_date, joint_spill_results_roll$jSOI, 
      type = "l", col = "blue", lwd = 1,
      ylim = range(joint_spill_results_roll$jSOI),
-     xlab = "End of window date", ylab = "jSOI",
+     xlab = "End of window date", ylab = "Joint spillover index (%)",
      main = "jSOI over rolling windows")
 
 ```
 
 
 If users wish to plot the 1,2 element of the gFEVD matrix (the percent of Bank of America's forecast error variance explained by the shocks of Bank of New York Mellon) over rolling windows, they can run the following
-```{r, fig.cap="Fraction of Bank of America forecast error variance explained by Bank of New York Mellon over rolling windows.", fig.alt="Fraction of Bank of America forecast error variance explained by Bank of New York Mellon over rolling windows."}
+```{r, fig.cap="Percentage of Bank of America forecast error variance explained by Bank of New York Mellon over rolling windows.", fig.alt="Percentage of Bank of America forecast error variance explained by Bank of New York Mellon over rolling windows."}
 #Plot the 1,2 element of the gFEVD matrix over the rolling windows.
-#This is the fraction of the forecast error variance of BAC
+#This is the percentage of the forecast error variance of BAC
 #that can be explained by the shocks of BK over rolling windows.
 
 plot(joint_spill_results_roll$end_of_window_date,
      joint_spill_results_roll$gFEVD["BAC","BK",], type = "l", col = "blue", lwd = 1,
      ylim = range(joint_spill_results_roll$gFEVD["BAC","BK",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percent",
      main = "Spillover from BK to BAC")
 
 
@@ -569,7 +571,7 @@ plot(joint_spill_results_roll$end_of_window_date,
      joint_spill_results_roll$jnt_from_others_to_i["BAC",],
      type = "l", col = "blue", lwd = 1,
      ylim = range(joint_spill_results_roll$jnt_from_others_to_i["BAC",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percent",
      main = "Joint Spillover From Others to BAC")
 ```
 
@@ -584,7 +586,7 @@ plot(joint_spill_results_roll$end_of_window_date,
      joint_spill_results_roll$jnt_to_others_from_i["BK",],
      type = "l", col = "blue", lwd = 1,
      ylim = range(joint_spill_results_roll$jnt_to_others_from_i["BK",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percent",
      main = "Joint Spillover to Others from BK")
 
 
@@ -597,7 +599,7 @@ If users wish to plot the joint net total spillover for Barclays over rolling wi
 plot(joint_spill_results_roll$end_of_window_date,
      joint_spill_results_roll$jnt_net["BCS",], type = "l", col = "blue", lwd = 1,
      ylim = range(joint_spill_results_roll$jnt_net["BCS",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percentage points",
      main = "Joint Net Total Spillover for BCS")
 
 ```
@@ -626,7 +628,7 @@ As an example, if users wish to plot the gSOI over rolling windows, they can run
 plot(gen_spill_result_roll$end_of_window_date, gen_spill_result_roll$gSOI, 
      type = "l", col = "blue", lwd = 1,
      ylim = range(gen_spill_result_roll$gSOI),
-     xlab = "End of window date", ylab = "gSOI",
+     xlab = "End of window date", ylab = "Generalized spillover index (%)",
      main = "gSOI over rolling windows")
 
 ```
@@ -641,7 +643,7 @@ plot(gen_spill_result_roll$end_of_window_date,
      gen_spill_result_roll$gSOT["BAC","BK",],
      type = "l", col = "blue", lwd = 1,
      ylim = range(gen_spill_result_roll$gSOT["BAC","BK",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percent",
      main = "Spillover from BK to BAC")
 
 
@@ -657,7 +659,7 @@ plot(gen_spill_result_roll$end_of_window_date,
      gen_spill_result_roll$gen_from_others_to_i["BAC",],
      type = "l", col = "blue", lwd = 1,
      ylim = range(gen_spill_result_roll$gen_from_others_to_i["BAC",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percent",
      main = "Generalized Spillover From Others to BAC")
 ```
 
@@ -672,7 +674,7 @@ plot(gen_spill_result_roll$end_of_window_date,
      gen_spill_result_roll$gen_to_others_from_i["BK",],
      type = "l", col = "blue", lwd = 1,
      ylim = range(gen_spill_result_roll$gen_to_others_from_i["BK",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percent",
      main = "Generalized Spillover to Others from BK")
 
 ```
@@ -684,7 +686,7 @@ plot(gen_spill_result_roll$end_of_window_date,
      gen_spill_result_roll$gen_net["BCS",],
      type = "l", col = "blue", lwd = 1,
      ylim = range(gen_spill_result_roll$gen_net["BCS",]),
-     xlab = "End of window date", ylab = "",
+     xlab = "End of window date", ylab = "Percentage points",
      main = "Net Total Spillover for BCS")
 
 ```
