@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Johnson Oliyide and Thomas Wiesen" />
+
+
+<title>JointShocks R Package</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">JointShocks R Package</h1>
+<h4 class="author">Johnson Oliyide and Thomas Wiesen</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#purpose" id="toc-purpose"><span class="toc-section-number">1</span> Purpose</a></li>
+<li><a href="#installation-procedure" id="toc-installation-procedure"><span class="toc-section-number">2</span> Installation Procedure</a>
+<ul>
+<li><a href="#loading-your-own-data" id="toc-loading-your-own-data"><span class="toc-section-number">2.1</span> Loading your own data</a></li>
+<li><a href="#sample-data-used-in-this-vignette" id="toc-sample-data-used-in-this-vignette"><span class="toc-section-number">2.2</span> Sample data used in this
+vignette</a></li>
+</ul></li>
+<li><a href="#empirical-analysis" id="toc-empirical-analysis"><span class="toc-section-number">3</span> Empirical Analysis</a>
+<ul>
+<li><a href="#wb2024--the-joint-impulse-response-function-and-joint-forecast-error-variance-decomposition" id="toc-wb2024--the-joint-impulse-response-function-and-joint-forecast-error-variance-decomposition"><span class="toc-section-number">3.1</span> <span class="citation">Wiesen and
+Beaumont (2024)</span> -The Joint Impulse Response Function and Joint
+Forecast Error Variance Decomposition</a></li>
+<li><a href="#lw2021-and-lw2025---joint-spillover-metrics" id="toc-lw2021-and-lw2025---joint-spillover-metrics"><span class="toc-section-number">3.2</span> <span class="citation">Lastrapes
+and Wiesen (2021)</span> and <span class="citation">Lastrapes and Wiesen
+(2025)</span> - Joint Spillover Metrics</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="purpose" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Purpose</h1>
+<p>Economic interdependence and financial globalization have intensified
+the need for accurate measures of shock transmission across
+macroeconomic and financial systems. To this end, the
+<strong>JointShocks</strong> R package provides researchers and
+practitioners with robust tools to estimate the joint spillover metrics
+proposed in <span class="citation">Lastrapes and Wiesen (2021)</span>
+and <span class="citation">Lastrapes and Wiesen (2025)</span>.</p>
+<p>Additionally, it offers functionalities to compute the joint impulse
+response function and the joint forecast error variance decomposition
+introduced in <span class="citation">Wiesen and Beaumont
+(2024)</span>.</p>
+<p>For comparative purposes, the package also includes:</p>
+<ul>
+<li>The <strong>generalized spillover index</strong> and metrics of
+<span class="citation">Diebold and Yilmaz (2012)</span> and <span class="citation">Diebold and Yılmaz (2014)</span>, and</li>
+<li>The <strong>generalized impulse response function</strong> and
+<strong>generalized forecast error variance decomposition</strong> of
+<span class="citation">Koop, Pesaran, and Potter (1996)</span> and <span class="citation">Pesaran and Shin (1998)</span>.</li>
+</ul>
+<p>The goal of this package is to streamline the computation of these
+metrics-across both <strong>full-sample</strong> and <strong>rolling
+window</strong> applications-within a user-friendly and reproducible
+framework. It bridges theoretical contributions from the academic
+literature with accessible implementation tools for empirical work in
+macro-finance, banking, and monetary economics.</p>
+<p>The remainder of this documentation proceeds as follows: Section 2
+briefly discusses the installation procedure. Section 3.1 provides and
+discusses the replication of key results from <span class="citation">Wiesen and Beaumont (2024)</span>, including the
+estimation of their Joint Impulse Response Functions (jIRFs). This
+involves implementing their bootstrap procedures, as well as computing
+the Generalized Impulse Response Functions (gIRFs) and the Generalized
+Forecast Error Variance Decomposition (gFEVD). Section 3.2 focuses on
+estimating the joint spillover metrics as developed in <span class="citation">Lastrapes and Wiesen (2021)</span> <span class="citation">Lastrapes and Wiesen (2025)</span> and the generalized
+spillover metrics in <span class="citation">Diebold and Yilmaz
+(2012)</span> and <span class="citation">Diebold and Yılmaz
+(2014)</span>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#install.packages(&quot;xfun&quot;)</span></span></code></pre></div>
+</div>
+<div id="installation-procedure" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Installation
+Procedure</h1>
+<p>To begin using the <strong>JointShocks</strong> package, install it
+from GitHub using the <code>devtools</code> package (only needed
+once):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co">#install.packages(&quot;devtools&quot;)</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;JohnsonOliyide/JointShocks&quot;</span>)</span></code></pre></div>
+<p>Then load it as follows:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(JointShocks)</span></code></pre></div>
+<p>Because the package relies on vector autoregressions, be sure to load
+the <code>vars</code> package:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;vars&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: package &#39;vars&#39; was built under R version 4.4.1</code></pre>
+<pre><code>## Loading required package: MASS</code></pre>
+<pre><code>## Loading required package: strucchange</code></pre>
+<pre><code>## Warning: package &#39;strucchange&#39; was built under R version 4.4.1</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## Warning: package &#39;zoo&#39; was built under R version 4.4.1</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre><code>## Loading required package: sandwich</code></pre>
+<pre><code>## Warning: package &#39;sandwich&#39; was built under R version 4.4.1</code></pre>
+<pre><code>## Loading required package: urca</code></pre>
+<pre><code>## Warning: package &#39;urca&#39; was built under R version 4.4.1</code></pre>
+<pre><code>## Loading required package: lmtest</code></pre>
+<pre><code>## Warning: package &#39;lmtest&#39; was built under R version 4.4.1</code></pre>
+<div id="loading-your-own-data" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Loading your own
+data</h2>
+<p>The package currently supports data files in <code>.csv</code> or
+<code>.xlsx</code> format. The first column must represent dates. To
+read <code>.xlsx</code> files, load the <code>readxl</code> package:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;readxl&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: package &#39;readxl&#39; was built under R version 4.4.1</code></pre>
+<p>To load your own dataset, use the <code>read_data()</code> function,
+pointing it at the path to your file and specifying the format of the
+dates in your file’s first column. For example, if you had a file called
+<code>&quot;my_data.csv&quot;</code> with dates formatted like
+<code>1/5/2017</code>, you would run:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>Data_date <span class="ot">&lt;-</span> <span class="fu">read_data</span>(<span class="st">&quot;my_data.csv&quot;</span>, <span class="at">date_format =</span> <span class="st">&quot;%m/%d/%Y&quot;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>Data <span class="ot">&lt;-</span> Data_date<span class="sc">$</span>Data</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>date <span class="ot">&lt;-</span> Data_date<span class="sc">$</span>date</span></code></pre></div>
+<p>This returns a list with <code>Data</code> (a matrix of your
+variables) and <code>date</code> (a vector of the corresponding dates),
+ready to be used with <code>vars::VAR()</code> and the rest of the
+functions in this package.</p>
+</div>
+<div id="sample-data-used-in-this-vignette" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Sample data used in
+this vignette</h2>
+<p>For replication, the remainder of this vignette uses datasets bundled
+with the package from <span class="citation">Wiesen and Beaumont
+(2024)</span>, which contain the volatility of eleven major banks from
+three different periods: pre-pandemic (1/5/2017-1/31/2020), pandemic
+(2/3/2020-2/3/2021), and full sample (1/5/2017-2/3/2021). The banks used
+are Bank of America (BAC), Bank of New York Mellon (BK), Barclays (BCS),
+Citigroup (C), Credit Suisse (CS), Deutsche Bank (DB), Goldman Sachs
+(GS), JP Morgan Chase (JPM), Morgan Stanley (MS), State Street (STT),
+and Wells Fargo (WFC).</p>
+<p>Load the pre-pandemic sample data as follows:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">data</span>(Volatility_data_pre)</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>Data <span class="ot">&lt;-</span> Volatility_data_pre</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>date <span class="ot">&lt;-</span> <span class="fu">attr</span>(Volatility_data_pre, <span class="st">&quot;date&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="empirical-analysis" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Empirical Analysis</h1>
+<div id="wb2024--the-joint-impulse-response-function-and-joint-forecast-error-variance-decomposition" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> <span class="citation">Wiesen and Beaumont (2024)</span> -The Joint Impulse
+Response Function and Joint Forecast Error Variance Decomposition</h2>
+<p>We refer users to <span class="citation">Wiesen and Beaumont
+(2024)</span> for a complete explanation of the methodology and its
+empirical contributions.</p>
+<p><strong>Estimate a VAR model</strong></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="co">#------------- Run a VAR model------</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="co"># Estimate VAR with 1 lag, as used in the paper</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>VAR_model <span class="ot">&lt;-</span> <span class="fu">VAR</span>(Data, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">&quot;const&quot;</span>)</span></code></pre></div>
+<div id="joint-impulse-response-function-jirf" class="section level3" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> <strong>Joint
+Impulse Response Function (jIRF)</strong></h3>
+<p>To compute the joint impulse response function involving shocks from
+Barclays (BCS), Credit Suisse (CS), and Deutsche Bank (DB), run
+this:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>jIRF <span class="ot">&lt;-</span> <span class="fu">run_full_jIRF</span>(VAR_model, <span class="at">from_set =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>), <span class="at">H =</span> <span class="dv">8</span>)</span></code></pre></div>
+<p>You can plot the jIRF response of Bank of America. The result it
+produces shows how the equity market of Bank of America respond over the
+next eight days to a joint, simultaneous one standard deviation shocks
+from Barclays, Credit Suisse and Deutsche Banks. Since <code>jIRF</code>
+is a labeled matrix, we can plot it directly using base R:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="co"># Plot jIRF for specific response</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>horizon <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">8</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="fu">plot</span>(horizon, jIRF[<span class="st">&quot;BAC&quot;</span>, ], <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">&quot;#33a02c&quot;</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Horizon&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Response&quot;</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Joint IRF: Response of BAC to Joint Shock&quot;</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>     <span class="at">cex.main =</span> <span class="fl">1.3</span>, <span class="at">cex.lab =</span> <span class="fl">1.1</span>, <span class="at">cex.axis =</span> <span class="fl">0.95</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;gray40&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If you’re interested in the gIRF of <span class="citation">Pesaran
+and Shin (1998)</span> without confidence bounds, run:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>gIRF <span class="ot">&lt;-</span> <span class="fu">run_full_gIRF</span>(VAR_model, <span class="at">H =</span> <span class="dv">8</span>) <span class="co"># Run the gIRF</span></span></code></pre></div>
+<p>This returns the entire set of gIRF results, showing how each
+variable responds to a one-standard-deviation shock in every other
+variable.</p>
+<p>To visualize a specific response-shock pair — for instance, the
+effect of a shock from Barclays on Bank of America:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">plot</span>(horizon, gIRF[<span class="st">&quot;BAC&quot;</span>, <span class="st">&quot;BCS&quot;</span>, ], <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">&quot;#1f78b4&quot;</span>,</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Horizon&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Response&quot;</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Response of BAC to Shock in BCS&quot;</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>     <span class="at">cex.main =</span> <span class="fl">1.3</span>, <span class="at">cex.lab =</span> <span class="fl">1.1</span>, <span class="at">cex.axis =</span> <span class="fl">0.95</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;gray40&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>You may compare the jIRF against individual gIRFs using:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co"># Combined IRFs as in jIRF paper</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>from_set <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>g_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;orange&quot;</span>, <span class="st">&quot;purple&quot;</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>j_color <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>g_vals_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(from_set, <span class="cf">function</span>(s) gIRF[<span class="st">&quot;BAC&quot;</span>, s, ])</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>y_range <span class="ot">&lt;-</span> <span class="fu">range</span>(<span class="fu">c</span>(<span class="fu">unlist</span>(g_vals_list), jIRF[<span class="st">&quot;BAC&quot;</span>, ]))</span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a><span class="fu">plot</span>(horizon, jIRF[<span class="st">&quot;BAC&quot;</span>, ], <span class="at">type =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>     <span class="at">ylim =</span> y_range, <span class="at">xlab =</span> <span class="st">&quot;Horizon&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Response&quot;</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;IRFs: BAC to Joint &amp; Individual Shocks&quot;</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>     <span class="at">cex.main =</span> <span class="fl">1.3</span>, <span class="at">cex.lab =</span> <span class="fl">1.1</span>, <span class="at">cex.axis =</span> <span class="fl">0.95</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(from_set)) {</span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>  <span class="fu">lines</span>(horizon, g_vals_list[[i]], <span class="at">col =</span> g_colors[i], <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a>}</span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a><span class="fu">lines</span>(horizon, jIRF[<span class="st">&quot;BAC&quot;</span>, ], <span class="at">col =</span> j_color, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;gray40&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">&quot;gIRF: &quot;</span>, from_set), <span class="st">&quot;jIRF&quot;</span>),</span>
+<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(g_colors, j_color), <span class="at">lty =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(from_set)), <span class="dv">2</span>), <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">cex =</span> <span class="fl">0.85</span>)</span>
+<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a><span class="fu">grid</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAA4VBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6ZmY6ZpA6ZrY6kLY6kNtmAABmADpmOgBmOjpmOmZmZgBmZjpmZmZmZpBmkGZmkLZmkNtmtttmtv+QOgCQOjqQZgCQZjqQZmaQkGaQttuQ2/+gIPC2ZgC2Zjq2kDq2kGa2tpC2tra2ttu225C229u22/+2/7a2/9u2///T09PbkDrbkGbbtmbbtpDbttvb27bb29vb2//b/9vb////pQD/tmb/25D/27b/29v//7b//9v///+S45wiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAQYUlEQVR4nO2dC3vbthWGqTj2pKbuktlNt3pNI29pYjFbusWbqTlrFltyLP3/HzTcCYAAzgEvlmSd73mUyAR4AL7EwU0gWKxJSRWbzsC2iwABIkCACBAgAgSIAAEiQIAIECACBIgAASJAgAgQIAIEiAABIkCACBAgAgSIAAEiQIAIECACBIgAASJAgAgQIAIEiAABIkCACBAgAgSIAAEiQIAIEKAEoHmh9PS1OrI6L4rRhYlw92bCAl/8D59aaZ8udH9aPLlKnrN6z1I5fIc6Z1EU40Cwc0TEico9+dMPBQaQsbhkWS1OdPh7FTiaWifdvYobRAOyjfCbwjUFzhHqGZC4wnhcC5DKnjiizy9NYH3Rq7+lEg8BCsg1wq/nhlE6uglfhKP0xWPi2LYXBQhIlBZ+D/WXJ3/SsHhpesEyfT2xEoQyiALkGpG5mNtIHgpQye9NIR2tePrqxk9aA+ImxRfGZGzMlyb0+NVNbZGJ32tRPX1nVxwqggRUB8sUeVKfXrJDl7aRtUp0dMHuQqME2eewm/d3Fu/n2sV0PvlNvVKXZcXhZ0/raxT5GXFLHqApq6S1J/EcBAHdnavL4kZX6g+RcPP6laFrZfOkEUGcbAWbi31aKP/1AKn82SWveY6pqQwgnT+rVrLjuIBE3SoTsQmwwNHrgh+5XK8ErQYgrRP3xsk/rHuqpe4bv+vvOFi7aq0B2cHGaPF6fXcqTvB84O4l53VpHQmfw67i06TGIQnI+ymP2HFcQDJb7/l3mwD7zsT+Hb1uXqoD6PCivvqlLO3LSQKQpB2II3NiB5urGZvsuoD+M7GaUQ+QOWd1bq5XA2L/joUtlgVdpuo4nout118/vCl8QPLeyILXrC6arVhp3ZNkCdLFW7ujB8gJdoplABD7Y/QTY3SynJg8Ns/Rl2U386WCov3YieMC4pWT8hSvAbh7W6xXb6T/vfKv17Ri1/o2WD7MC16zQVroMJlI3WjNNWPbzUsYkEyGt7fHtb/GAfFmRP/Bvk/Zh391AIk4vosVo+f/mAcAyZ706sOPE78YW4BUSVjU5UneIBW6/OaV6UtHS5C6U+e5JUh5qdMBCwAKVMn82LiUpprVtnN2nYgDSB7W/aBls29hAF1brYvxOM6L94N4pWe3yeE6iFeQFzyuYtusg2pAyogNSCRumsTAOWWjDlL9PHGH5JHSq4NO1uo217l2AHH/PLosFrKJkD2NWCvGDKjSKo/zTJcOL+d6mq2Y8U8/OAzIEOeZ/MON6I2yLkwckGyhric2IJHmUd29s+PwPw4vRX/jRHa11HevmWcyHEaJZp6dP7dHZPy+rPRYzOrt6DzNGyELY8iyfBK82PrCbLLH9Y0InFPfLmssNtenmGrbqUOV1ZPwyVxqLCZ60qPnl+sYIB62soqDrn5++4GP5p/bXZQlaxiPrnRX+aMXMtJx6+DQxWojsgy9/5Z3cj+ybOpJhdA5opf86tq5RlPo7Z60jMOy8AOfI1B143sW8OKL1elW+sSucE1KigABIkCACBAgAgSIAAEiQIAIECACBIgAASJAgAgQIAIEiAABIkCACBAgAgSIAAEiQIAIECACBIgAASJAgAgQIAIEiAABIkCACBAgAgSIAAHqGVCxM9oUoIHj9yYC1FfCgwCqkLErXPJIc1nRNgwIaXVvAW2sCsRrw3UQmtCeAqqQgPbWxSpkEdpbQHgf2xcXM/3Tit0f+SnW9fft/DwkIM9chSxCe+ti1FHszVzr5JfPrtRDukc3zc0H5KMq9TM/4tES/siKec5qPwBxIKvzE/FxdH8qnm9k7JYT8RATA1OKR/00oaEA6SeAppHw4V2MP6T59smVAbReHN1IQDxaeaIi8aAFf8xQHFiMLu6/v5CHurjYZ2ifklI9KiRuSdxcS0AHEdnm7k/5A3BRQCaWKEHT9fIb/WCtKTytAd39hXntv77/ORFZpityFdkboouLxfgcHFiRFuLpUgsQJ6bqIO/BPn7Ayic/Vj+onQ9oORn9NHny7/Oo96xbAAIb++w6aD6WqdeV9Hgdq4Pmows3n/JZ+ryETcSymN6fsoQngcfhjUoViHUxAFCLOsgBNFVOH3Ex9q9ysZWuO9jfLV2Mw9GfRPRFZiWdJtQCUMPFSrErRwyQKlusLVuoRn86LCCsOfM3kJFsF+NXLEp6XQeNoy4mmvkTHUehzUxYR2QOLVxsEdpxAq9GugCh/H6QaOaPbqxWrBjXgEwzH+komotrWUmP3k4QOyCtoUraKuxJQG2HGovgTRx6qMEfxtYbveTKG81X1qjZHuH7n6rFKHx0UVXnJx1G8VX70fzX3z5CPcUcc5pdXnxIc6fD01pthxq/dST0mH8X+/THqzunsxmQ2LAldQ8f8XQH32euLH73PrmNXMk3ORGbSEUIPV5Aq3Oxlw9r6hNFSHQvBJshxmJZSs8HRaeB8hO2O4qLAugoCkC6s580l5t8ttLzQdFpoPyEbUBzsU1Qqietx2Ii2bi5jc8HBaaBPGttBqvPmYet58BWmoLQchKLFAEUaes9QLcR5c8HBaaBrETrjCJkIt6zfuILlv5hl6FYLN1oZ8g+HuNze2tFws0HRaeBoIwmc/iVmVl9xp4ImnOPx8jlJoCbD4pOA+Un/EA/+4TXvA02HxSYBvKsteko/ngs9F336Y5AJR0kNNh8UGAayLPWpqNYFH0BCoYEy9BA80HRaaD8hK35oB6GgKl0g4QGmg+KTgPlJ2z3g7IzW1uJT3ekPm2mO/hncfTw0x18qNEekGduwI7iQux1GizsAw9WWUntMtfqmxso/ubmg+7FbpM9VdJO1w6V/IOrBaDj4/6aeSShXZru6EkGEArRrgFaff7ctRrS5hKEnNZ+d1ys268aAXNRQk5/aKAJM3lAbS1fFEWzC9Pmd7Hi+a8f3mDeDAKaE6UYQaiDiwUmzJyhhlgfJPar1kupXGute9LAfBDOnMxDgpD64gGaRdRmwkwEzfmO52oplTHQ4bd5+/+W8ifAIrFMNDt+jM9sZkVKTJhZUkFsEG+WUqUyirmiIQBFq+raybLrINyEmQLE6JilVMmMJtR0sR4WLxifAAh1nQ9yJ8wadZAEpJZSedZaVtK/9lhJS0UJyXgDTZj5LtbHfFCfixfsz+1tv48QHN1U1fxJVT27qqop+7tk31fnXryV/H/ORv2nU/b9vp9HEXrsKFpKdqoHmjDzm/l5o95oN9RYdR7PKxeb2cfihFr/LhacMHOa+XhHsbWL8fcoFIXzEoh8aUAz+2B03LFTC6hYJX14dvayl0r6YIYjlPF8v1ZiwixLw/SkhUOLQpte5Xpw4AKKuVkLQJubMMN0FDkg+WM3sPwFSQj5bOtWTHeszpGAZIMALuKcBQg1EO3UfNBiIuak59CjCAsEIC5G6MAJClZEuzMftPrlx2L0+zNRU5+d/Tnc3vPqZ3QsXCy5/EWoQSjkZtmAmIdDa6dQalEHFZbibqZekodZ/hIk5CBq52KxtVO7NCct/+CEkm7WApAuQYGZjgcB1O8y4CYh382c+Lr8xv7mSgDqkFFURMwyYCPkGkUOKOlmzgS+B8T/W8gGFJwKQiofEGoZcNRK/Lf5gwNvFM1G97cdfpv//qKqrlbyEYfxusVjCR1+mweXAWPN1akLJ4u6Wbc6yJoKakQDrbXqSYPLgPHmjHiHMeFmrZt5d+1UDxmFIuKWAbdIVxGKtGadAIXXTrXNKBQRtwwYZ84p7EFC0s06N/P22qmhm3nMMmCrN4l9oG6thmXBQtQOECYaaK1NPwizDLi52C9qrpYh5CASbpbtYvZ61S5q11EEd15wf8RFpytH9iFEuYA61gC12ky5wjsvYM01Crua+/ARVThA2zHdgdl5AWsuAGgmv7iIdmo+CLXzAt6cp3r+zEW0O/NBA20sYDQLI9pTQKHCPgsg2iUX63XnhXBW7YUsEtEuAcrceQE0F1QT0e642GCLF5zPrKpmM3cqhJ+ziU8+oB53Xkik7qwYq5wmLfELNUoPNSf936HqICULUaX35VJBEUTbAGj16eydAHP3Zphm3pa77tDep8x/QtUy3OZn6oQyAS0nvPphZK4nPe8fFJa3MtNi1HiKVxtuzE53Uyagshh/KfnkSjF63UO6iMIuEFnxUohUNIjRgC52f8oa9+Xk8K9dlwfhAa0bC6DjjEy0DQJiFQ9futWt+OSku9brou0jtavFPK03tQPUaSCfl65Qc5242W1yaEatAHVqv+x0sb2wKs1IIwqYC1VHw7vYJgCt60cQ7BCHUQyQB2mHAGUrwSiwf4dOq0vDnwsItfSlz3Sbghn1WSHlAVr9clYrsngqJ908F6sVeryHb5ecLEhRa8loD7w+KLF4IfUJxZvN6o896ucf/lhD7NEGcCah4+KFntSPudCjYmlvCy6V6SWjWwlIKEDJg+RR2iFAbeugpgSfqkkptD3VNtdBnrn+AMloEYfzKNnWEh43LCDcWxGGUKBaEpxCZSkJSEXAppt3Rci3IgylUOW95phuXTWz1QA2DCDspv99u5jz18xTHe22KZ0tC9CQLrYVgIR8SqIuFyEHjfIUrMuHcjHcWxEeUiFUtaKohqqkcW9F2IzSqDyffFzNfOtocU8kQEC0oQH1tV3yxrS50fzZmRwtb/v/DwvIM0cuFjcny1GBEzLeINEGAgSNxfKMIuNtJFq76OBYLM/oowMEDzXyjBKgfhLfHUDwWCzP6OMDBI7F8ow+QkD9GiVA/cQjQNsYrWX0/RMBAkSAABEgQAQIEAECRIAAESBABAgQAQJEgAARIEAECBABAjQAoBK3lR5f3o9b1Y/aEgeXKt80L++Ryv4BzfnmhvAmNvI9w5jMot4Nx7cnhq2JNx6iEjXqHZD45SP9o4cQ3zkbVzbmT+FYwhBsDRnNVu+ARPL2axrAyFCcZ/+EY4U3cQ+nt2FAovBgASFK++p8irii+XiBqdG2wcUUINTmfXNE5TIfY255ybfuwhQjZAtSa5MlKLm5t9Ly2RUKEL9qOFW582LWE3EbrINKzEYzc8wPleqNNnCq4u5tuA7CtmLgjoO1EFcky218j0U72oYB8dKO6QdlZBMRVWzI2XxBjS9858tomJ40YrNDpO9wYVgiu8j36B2ztWgsBogAASJAgAgQIAIEiAABIkCACBAgAgSIAAEiQIAIECACBIgAASJAgAgQIAIEiAABIkCACBAgAgSIAAEiQIAIECACBIgAAdoOQHOz5UVzXZFY9LQ5ESBA2w9ow9pGQHcvi+Lwkped8bx48pGVoIVZClKHHX34thh1e2UlRlsIaMHfo1OMLhiEp5Pi6IsNyArDL5/ppC0BZPaHEm+Qf82P8HVY/D3yug5ayCN12Pimv9euxrV9gJYTcdHl6EIut1SAxFu6/TBgF5o+tCWALBdbTuSLrjkEjkb+K14/FAgjQApQKWobAnTqupgBNC9E+98M20NAdkWsAS1UZdwM20NAdlOuAH051xtfNcL2EZB4oanqDPqAGmF7AmiLRYAAESBABAgQAQJEgAARIEAECBABAkSAABEgQAQIEAECRIAAESBABAgQAQJEgAARIEAECBABAkSAABEgQAQI0P8BeWAwEDolQXEAAAAASUVORK5CYII=" /><!-- --></p>
+<p>Note: To explore a different set of shock contributors, rerun
+<code>run_full_jIRF()</code> with a new <code>from_set</code> and
+recompute <code>jIRF</code>/<code>gIRF</code> before re-plotting.</p>
+</div>
+<div id="joint-forecast-error-variance-decomposition-jfevd" class="section level3" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> <strong>Joint
+Forecast Error Variance Decomposition (jFEVD)</strong></h3>
+<p>Users of this package can also calculate the joint forecast error
+variance decomposition (jFEVD) of <span class="citation">Wiesen and
+Beaumont (2024)</span>. This jFEVD measures the proportion of a
+variable’s forecast error variance that can be jointly explained by a
+specified set of multiple shocks.</p>
+<p>We recommend referring to <span class="citation">Wiesen and Beaumont
+(2024)</span> for a detailed explanation of the model’s theoretical
+advantages and empirical applications.</p>
+<p>To illustrate, the jFEVD result can be interpreted as follows:
+approximately <strong>16%</strong> of the <span class="math inline">\(H\)</span>=30 step forecast error variance of
+<strong>Bank of America (BAC)</strong> is attributable to joint shocks
+from <strong>Barclays (BCS)</strong>, <strong>Credit Suisse
+(CS)</strong>, and <strong>Deutsche Bank (DB)</strong>.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="co">#-------------Joint FEVD------</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="co"># Run and present jFEVD result</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>jfevd <span class="ot">&lt;-</span> <span class="fu">run_full_jFEVD</span>(VAR_model, <span class="at">from_set =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>), <span class="at">H =</span> <span class="dv">30</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>jfevd</span></code></pre></div>
+<pre><code>##        BAC         BK        BCS          C         CS         DB         GS 
+## 0.15952241 0.05223781 0.96668595 0.16460344 0.95693593 0.94891627 0.14332551 
+##        JPM         MS        STT        WFC 
+## 0.16926043 0.13025529 0.05798865 0.08725354</code></pre>
+</div>
+<div id="generalized-forecast-error-variance-decomposition-gfevd" class="section level3" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> <strong>Generalized
+Forecast Error Variance Decomposition (gFEVD)</strong></h3>
+<p>Another important concept is the <strong>gFEVD</strong> of <span class="citation">Koop, Pesaran, and Potter (1996)</span> and <span class="citation">Pesaran and Shin (1998)</span>. This decomposition is
+embedded in the <code>genspill()</code> function and captures how shocks
+in one variable contribute to the forecast error variance of
+another.</p>
+<p>While the <code>genspill()</code> function produces several outputs
+(fully discussed in Section 3.2), our current interest is solely in the
+<code>gFEVD</code> matrix.</p>
+<p>Each element <span class="math inline">\((i,j)\)</span> of the matrix
+quantifies the proportion of the <span class="math inline">\(H\)</span>-step forecast error variance of
+variable <span class="math inline">\(i\)</span> that can be attributed
+to shocks originating from variable <span class="math inline">\(j\)</span>.<br />
+For instance, using pre-pandemic data, the gFEVD results suggest that
+<strong>7.2%</strong> of Bank of America’s forecast error variance is
+explained by shocks from <strong>Barclays (BCS)</strong>, and about
+<strong>6%</strong> by shocks from <strong>Deutsche Bank
+(DB)</strong>.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>genspill_results <span class="ot">&lt;-</span> <span class="fu">genspill</span>(VAR_model, <span class="at">H =</span> <span class="dv">30</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>genspill_results<span class="sc">$</span>gFEVD</span></code></pre></div>
+<pre><code>##           BAC         BK        BCS         C         CS         DB        GS
+## BAC 0.9341628 0.19338713 0.07174584 0.6663017 0.11798916 0.06028896 0.5800812
+## BK  0.3636745 0.84861996 0.02595194 0.3133308 0.03611692 0.01708104 0.3630035
+## BCS 0.1105617 0.04713352 0.96118080 0.1137758 0.06482824 0.11523550 0.1256159
+## C   0.5815652 0.18574850 0.08310222 0.9667632 0.11777901 0.05307041 0.4829849
+## CS  0.1623523 0.05632249 0.05827780 0.1567158 0.95408863 0.20545501 0.1330114
+## DB  0.1173690 0.04654549 0.08755388 0.1043196 0.21980032 0.93803018 0.1201977
+## GS  0.5790122 0.16225563 0.08777056 0.5372057 0.08478607 0.04995554 0.9231996
+## JPM 0.6204567 0.18944745 0.09349255 0.6724495 0.11208198 0.05924410 0.5367325
+## MS  0.6003683 0.26112006 0.05947695 0.4635273 0.09129491 0.05815206 0.6050942
+## STT 0.2704402 0.28513342 0.02768311 0.2650836 0.03344899 0.03398801 0.2973659
+## WFC 0.4319118 0.16214739 0.04435500 0.4580954 0.05967095 0.03554170 0.3815070
+##            JPM         MS        STT        WFC
+## BAC 0.65819266 0.43345959 0.16944763 0.47917170
+## BK  0.28284106 0.35771303 0.15529065 0.25641269
+## BCS 0.12192095 0.09830710 0.05181303 0.06028663
+## C   0.58618540 0.39354039 0.23290596 0.41561282
+## CS  0.14284142 0.11647558 0.07622907 0.10152483
+## DB  0.09594272 0.09836325 0.08129486 0.07489256
+## GS  0.55648506 0.40694563 0.16974769 0.41660664
+## JPM 0.93603194 0.37685117 0.19826444 0.55574753
+## MS  0.43309480 0.84542878 0.15862593 0.34361573
+## STT 0.19131216 0.33063710 0.79025181 0.16472681
+## WFC 0.54340354 0.24595280 0.11973258 0.95833134</code></pre>
+</div>
+<div id="bootstrapping" class="section level3" number="3.1.4">
+<h3><span class="header-section-number">3.1.4</span>
+<strong>Bootstrapping</strong></h3>
+<p>The interpretations provided above remain valid; however,
+bootstrapping allows us to compute <strong>confidence intervals</strong>
+around the impulse response functions, adding a layer of statistical
+inference.</p>
+<p>Bootstrapping is split into four functions. First,
+<code>bootstrap_VAR()</code> bootstraps the VAR model itself, saving the
+constant, VAR coefficient matrices, and shock covariance matrix for each
+of <code>B</code> iterations. The first iteration is always the original
+(non-resampled) fitted parameters, so the original IRF can be recovered
+alongside the bootstrap distribution. Then,
+<code>bootstrap_gIRF()</code>, <code>bootstrap_jIRF()</code>, and
+<code>bootstrap_gIRF_sum()</code> each take the bootstrapped VAR
+parameters and compute confidence intervals for the generalized IRF,
+joint IRF, and sum of generalized IRFs, respectively — for whichever
+<code>response</code> variable you request.</p>
+<p>Make sure you have sufficient memory available, as bootstrapping can
+be computationally intensive depending on the number of iterations
+(<code>B</code>). The default is <code>B = 10000</code>, and the default
+confidence interval is 90%, but you can set any desired level using the
+<code>CI</code> argument.</p>
+<p>In the example below, we bootstrap the VAR with 500 iterations.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="co"># B is the number of bootstrap iterations (default = 10000)</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="co"># VAR_model is the object estimated using the VAR function</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>boot_model <span class="ot">&lt;-</span> <span class="fu">bootstrap_VAR</span>(VAR_model, <span class="at">B =</span> <span class="dv">500</span>)</span></code></pre></div>
+<pre><code>## Bootstrap iteration: 200 
+## Bootstrap iteration: 400</code></pre>
+<p>With <code>boot_model</code> computed once, we can now compute the
+bootstrapped confidence interval for the jIRF, the gIRF sum, or an
+individual gIRF, for any response variable, without re-running the
+bootstrap each time.</p>
+<p><strong>Joint IRF (jIRF) with confidence interval</strong></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="co"># response is the response variable</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a><span class="co"># shocks is the set of variables where the joint shocks originate</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="co"># H is the H-step ahead</span></span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a><span class="co"># CI sets the confidence interval level (default = 0.90)</span></span>
+<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a>jIRF_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_jIRF</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shocks =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>), <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a><span class="fu">summary</span>(jIRF_CI)</span></code></pre></div>
+<pre><code>## jIRF: The response of BAC due to joint simultaneous shocks from BCS, CS, &amp; DB. 
+## 
+##     CI lower bound   mean median original CI upper bound stand. dev.
+## h=0         3.2546 3.6557 3.6454   3.6927         4.0757      0.3126
+## h=1         2.0251 2.5352 2.5385   2.5837         3.0293      0.3879
+## h=2         1.3006 1.7933 1.7923   1.8423         2.2562      0.3787
+## h=3         0.8702 1.2702 1.2757   1.3154         1.6703      0.3162
+## h=4         0.5810 0.8942 0.8986   0.9334         1.2028      0.2495
+## h=5         0.3793 0.6260 0.6229   0.6581         0.8542      0.1925
+## h=6         0.2497 0.4376 0.4355   0.4627         0.6159      0.1476
+## h=7         0.1648 0.3071 0.3050   0.3259         0.4459      0.1133
+## h=8         0.1135 0.2170 0.2129   0.2307         0.3238      0.0873</code></pre>
+<p><strong>Sum of generalized IRFs (gIRF sum) with confidence
+interval</strong></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>gIRF_sum_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_gIRF_sum</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shocks =</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>), <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a><span class="fu">summary</span>(gIRF_sum_CI)</span></code></pre></div>
+<pre><code>## gIRF sum: The sum of the generalized responses of BAC due to individual shocks from BCS, CS, &amp; DB. 
+## 
+##     CI lower bound   mean median original CI upper bound stand. dev.
+## h=0         5.2781 6.0644 6.0611   6.1212         6.8981      0.6311
+## h=1         3.3026 4.1703 4.1858   4.2448         5.0395      0.6898
+## h=2         2.0952 2.9344 2.9185   3.0103         3.7662      0.6510
+## h=3         1.4205 2.0728 2.0575   2.1437         2.7643      0.5376
+## h=4         0.9483 1.4576 1.4402   1.5194         1.9794      0.4215
+## h=5         0.6052 1.0198 1.0157   1.0708         1.4054      0.3237
+## h=6         0.3936 0.7126 0.7051   0.7525         1.0169      0.2470
+## h=7         0.2691 0.4996 0.4901   0.5296         0.7268      0.1888
+## h=8         0.1798 0.3527 0.3444   0.3747         0.5288      0.1450</code></pre>
+<p><strong>A single generalized IRF (gIRF) with confidence
+interval</strong></p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="co"># shock is the single variable where the shock originates</span></span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>gIRF_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_gIRF</span>(boot_model, <span class="at">response =</span> <span class="st">&quot;BAC&quot;</span>, <span class="at">shock =</span> <span class="st">&quot;BCS&quot;</span>, <span class="at">H =</span> <span class="dv">8</span>, <span class="at">CI =</span> <span class="fl">0.80</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a><span class="fu">summary</span>(gIRF_CI)</span></code></pre></div>
+<pre><code>## gIRF: The generalized response of BAC due to a shock from BCS. 
+## 
+##     CI lower bound   mean median original CI upper bound stand. dev.
+## h=0         1.5032 1.8310 1.8209   1.8387         2.1857      0.2597
+## h=1         0.8766 1.2965 1.3110   1.3219         1.6949      0.3218
+## h=2         0.5744 0.9620 0.9822   0.9893         1.3423      0.2995
+## h=3         0.4016 0.7091 0.7217   0.7347         1.0129      0.2407
+## h=4         0.2693 0.5135 0.5170   0.5359         0.7440      0.1836
+## h=5         0.1859 0.3669 0.3677   0.3854         0.5368      0.1377
+## h=6         0.1288 0.2608 0.2582   0.2754         0.3927      0.1031
+## h=7         0.0853 0.1857 0.1837   0.1968         0.2883      0.0776
+## h=8         0.0581 0.1331 0.1302   0.1413         0.2091      0.0590</code></pre>
+<p>You can visualize any of these bootstrapped IRFs directly with base
+R’s <code>plot()</code>/<code>polygon()</code>, using the
+<code>lower</code>, <code>original</code>, and <code>upper</code> fields
+returned by each function. In all of the examples below, the shaded
+region shows the 80% confidence interval, and the solid/dashed line
+shows the original (non-bootstrapped) IRF.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>horizon <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>jIRF_CI<span class="sc">$</span>H</span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a><span class="fu">plot</span>(horizon, jIRF_CI<span class="sc">$</span>original, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(<span class="fu">c</span>(jIRF_CI<span class="sc">$</span>lower, jIRF_CI<span class="sc">$</span>upper)),</span>
+<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;h steps ahead&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Responses&quot;</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;jIRF: Response of BAC due to joint shocks from BCS, CS, and DB&quot;</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(horizon, <span class="fu">rev</span>(horizon)), <span class="fu">c</span>(jIRF_CI<span class="sc">$</span>lower, <span class="fu">rev</span>(jIRF_CI<span class="sc">$</span>upper)),</span>
+<span id="cb41-7"><a href="#cb41-7" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">&quot;black&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" tabindex="-1"></a><span class="fu">lines</span>(horizon, jIRF_CI<span class="sc">$</span>original, <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;gray40&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" tabindex="-1"></a><span class="fu">grid</span>()</span>
+<span id="cb41-11"><a href="#cb41-11" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">legend =</span> <span class="st">&quot;jIRF&quot;</span>, <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">cex =</span> <span class="fl">0.85</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>horizon <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>gIRF_sum_CI<span class="sc">$</span>H</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a><span class="fu">plot</span>(horizon, gIRF_sum_CI<span class="sc">$</span>original, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(<span class="fu">c</span>(gIRF_sum_CI<span class="sc">$</span>lower, gIRF_sum_CI<span class="sc">$</span>upper)),</span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;h steps ahead&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Responses&quot;</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;gIRF sum: Response of Bank of America&quot;</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(horizon, <span class="fu">rev</span>(horizon)), <span class="fu">c</span>(gIRF_sum_CI<span class="sc">$</span>lower, <span class="fu">rev</span>(gIRF_sum_CI<span class="sc">$</span>upper)),</span>
+<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">&quot;purple&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.25</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb42-8"><a href="#cb42-8" tabindex="-1"></a><span class="fu">lines</span>(horizon, gIRF_sum_CI<span class="sc">$</span>original, <span class="at">col =</span> <span class="st">&quot;purple&quot;</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb42-9"><a href="#cb42-9" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;gray40&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb42-10"><a href="#cb42-10" tabindex="-1"></a><span class="fu">grid</span>()</span>
+<span id="cb42-11"><a href="#cb42-11" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">legend =</span> <span class="st">&quot;Sum of gIRFs&quot;</span>, <span class="at">col =</span> <span class="st">&quot;purple&quot;</span>, <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">cex =</span> <span class="fl">0.85</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>horizon <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>gIRF_CI<span class="sc">$</span>H</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a><span class="fu">plot</span>(horizon, gIRF_CI<span class="sc">$</span>original, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(<span class="fu">c</span>(gIRF_CI<span class="sc">$</span>lower, gIRF_CI<span class="sc">$</span>upper)),</span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;h steps ahead&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Responses&quot;</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;gIRF: Response of BAC due to a shock from BCS alone&quot;</span>)</span>
+<span id="cb43-6"><a href="#cb43-6" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(horizon, <span class="fu">rev</span>(horizon)), <span class="fu">c</span>(gIRF_CI<span class="sc">$</span>lower, <span class="fu">rev</span>(gIRF_CI<span class="sc">$</span>upper)),</span>
+<span id="cb43-7"><a href="#cb43-7" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">&quot;purple&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.25</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb43-8"><a href="#cb43-8" tabindex="-1"></a><span class="fu">lines</span>(horizon, gIRF_CI<span class="sc">$</span>original, <span class="at">col =</span> <span class="st">&quot;purple&quot;</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb43-9"><a href="#cb43-9" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;gray40&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb43-10"><a href="#cb43-10" tabindex="-1"></a><span class="fu">grid</span>()</span>
+<span id="cb43-11"><a href="#cb43-11" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">legend =</span> <span class="st">&quot;gIRF: BCS&quot;</span>, <span class="at">col =</span> <span class="st">&quot;purple&quot;</span>, <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">cex =</span> <span class="fl">0.85</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAA2FBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6ZpA6ZrY6kLY6kNtmAABmADpmOgBmOjpmZgBmZjpmZmZmkJBmkLZmkNtmtttmtv+QOgCQOjqQZgCQZjqQkGaQkLaQtpCQttuQtv+Q29uQ2/+gIPC2ZgC2Zjq2ZpC2kDq2kGa225C227a229u22/+2/7a2/9u2///T09PbkDrbkGbbkJDbtmbbtpDb25Db27bb29vb2//b///nx/v/tmb/25D/27b//7b//9v///8xG894AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAPC0lEQVR4nO2dC3vbthWGpTSe1GVNJjfburXymqzZbGXdmqwRt3ZdbTq2/v8/Gu4AQQLf4c2k2fM9jxKZxI0vzzkASYBanVhZraZuwNzFgIAYEBADAmJAQAwIiAEBMSAgBgTEgIAYEBADAmJAQAwIiAEBMSAgBgTEgIAYEBADAmJAQAwIiAEBMSAgBgTEgIAYEBADAmJAQAwIiAEBMSCgAQHdv92uVi/U12KltX7+Xu8rV6snH2y6H56JXZ+9j/MffJJUDX8HCWIVq/UlSBLXGhyF0oCASolkZxpmZWo/iK97nezupdm1A02t6eNLRDBWB0Bl1LQBAQWt8YB0XXfn4ttG7bq/cLv2+abWhE0s0yRqoXEWcY6/+91q9VQb/I/i6yd/utbp/vZWbFeJ//3Mecu92Lh+ce0LcFkOyqcuTS261tutxlKu1n8wmwS7p2+ENQhOZ7YYadZP36im6vYKoLtaZQdrkb6VpgnSJj/zh+WbWzmKSj7p5p98ZQGJ+p6895WsL0XGb16qbfZsqiMzJ142vAi2F95blCmIGh10n6UJ0I9bbUGH1dl/9VdhQHrX/Z9f/Gz5WKOKAEWVWUBBK0+a/iqoutLcwhdcOTpdljJvWaFogM3tAJmk8ovg9INyAHG+9aadPtHv9XfRzs21TKKLey/TWSetZmlwMdUcebyiEfK7LOwUSRzh5lpaSwQorkzvC6s0eH91HSQLmytSnZmjqOQTNf72+uO5qfD7i8DdC2sTIuP/ZCa9LzBv/V+htisXEf88fecq3wUGcoqy1AGtv9IExB69OzheJwelCihRWVil1U//eGZjXNhccxQOt8unvxfP36m/fx9GZQdobw3KmN/60pxjnUSnU+dbe4ByXgU0sOeGLJEFqaoPMpVG0wBIFLJxxx8AiivT+ypV6vyvdLKNK24VRNLgKFw++90iCOOyBaQ2qbIUIGFze2v98ntYtOhedTv/at3dldiQxdSiT6+2YnekolUNLmY3BYAUxrgyF099lRbI07/85Mv1zQ2PIsxnT4kD5HlVAakoCC1I1vn6mSpFNLzSN6ctyNi/2WG1D4O0HUTaQmJAcWUJC9I2WQFvm0u0oLNvG2KQt6BUDAoBybRfi82185+MQcaCLnRzrDaN3XwYg3Qhpe0cGiqLY1Bpo2XFdVVzK0dRj0HlZ2/03yKBA1YBZHrO5l7MFa1CvjRc1ZeLsPvRlwd7MW12G2Mp2gK8PZ3sIYpe7GD78J2ip8JqtTIX5iu9mPpb5ti40lxzQ0BRL/bi+l51XopV6RtTBeSiQ22kEBb91ocCMzTxQa2WJQKkPWxvt+6DSw1/wXPwjXAt2tUrK1dN4yBH3Jpb0NyKHzSMgzaR39YAyUxPvhe9wPNgJP2lT2eKDq4uP77autSNWaqARCYXdcw5tBer73wZ999uxbDWhB/B7/l3uoePKpNDJTnk91Xqza+k1/rRQNDcaqAI86mR9JenUxj0mgCdgqtsVpMYEBADAmJAQHzLFYgBATEgIAYExICAGBAQAwJiQEAMCIgBATEgIAYExICAGBAQAwJiQEAMCIgBATEgIAYExICAGBAQAwJiQEAMCIgBATEgoIEBrR6NpgI0cvrBxICGqrhdC+18wOSUGV3ckVjccWmACjuRr6yvJwiL+6UCur9wWAo/Nb2huBtykcsCdHfu5qOXCSczgMiElgWIbEFHIqGluZiIQcaEUAy6oRFaHCA7932VsB/vYkRCiwNELI4BgeKORELLczGnItuLaUCY0IIBxaVYHcUY8Sj46I/8nv90rv721x/MsF7EQzvAd6MQHSvVSVRfzdJrvyJoDjGIZEP9AEkgcuwRjD+09IjtoFbKqlW9G/HXRibetK14xBiECXVxMWER69dPPjhAp/Ls2gM67EwiuauUK+LVhnJ9eff55SkY4I4EqLB2TIpBbQFdpRSkuTuXi1mTgFwqZUH70+2ndgmbN56goQT5hLLqIjPEESrWl9pcAaCbG6qThe1M8gkBlWptYwBINtvEIE/JjNd24SWR3OYPrgOgg1xdulGumpA+UfcXcuknFRAg1NrFCtm80gBSFDanVAwS57N6zRgsE24PSJZZCv9JXYae/MWqQEl1sTyhDjGoAkg05yAbkgAk/jUudm9fE+JcrhsgWVvq0E9BOw6bFoAyhDoAqrnYQa3JTQEye0RfVppOfx82lKDAxTZ352fXOsQkZLHoJe7p4q6uiITaA5JHfHdeiUGbpIupbn5n0xi0LSsOg7R6CcAml7pwr4MAgK7GAqS7eREufS+22jR084mBoovSE4+DiCbU9VKjzHW1NE09UKQR6hKDxEij5lEd1AWQeoPFoV/dtpu/ItpQ+/NTrOqvh+ugDoDEuSlkkO5VuxsHEQk9oqt5abdFZgjYprgjkdCjut0he0YJKDNQJBenxkFLA2Qt6NCrhwgvNSJCjYgeESATg4r49Y9d6rWAMKHHBEgPqeCbKynFHYmEHpWLDVmvvRZDhH6xgByQGFDNhsaaHoXV7oikCDfMWgOqE6LPaxhXo9wwIxd3DADlCBGnyYyRbJQbZuTigvtBWUKPDhC4YUYuLsSRt6HJNM4Ns3QpVuaB4I1/eHhzFXwnP1B8iE9bQJQbZsTijpENxSZkbehRudgwagZUJ3QTtBVqeYBOMAxNHog6AIJTfNsVN3NCXYL0EO8LtC5WBdQUhiShR+ViPW8lVopTbSAQemSAet3niIs7EZxsSi/rcsNsM3C9N5jQdIi63DDrd6ssLM4YOyREnE89FxdbDdaL2abGhGJExPnU8wA0jKrF3SBC03nZPABFhOYUqrsAUq+TH+aetPs7T+hIQzQTFyvND8XkQnXrBXWxtVTdzN03yrdxHoDsjIDUOh61j7igLlCe0HRu1n2gmLmjSF4OFajOYh6ERrEg8oK60NhzhI40QvNwMUIMoi+oCzc1ErqqAcogmgkgQi9GXVBXUYM/zSAQjTQOIi6oq6oBxfSBaOpbrhUlCR1phObiYso8ek6PJANSblYD1ExoJoBK/UOZtKF0fiJ5rCSh6bysSzfv1hl0qC56LhZ/burPxuTnquGZ2c1cn4vp9VTZgSK5uFrtjSYkcNBi9TxczFpQ7lKDWly9qWlABELzAGTuKA4yBa9BCRuabEjU445ir5uKrQFNRWiUcRCBYcrFmgkdaYhm4mIEJRf5RMW1AwQJzQQQZQoefDaUqzfpZVP42VhT8NCzoWy9cyI08RS81O5mF0OI5uFiQ07BSzc1DShDaB6Aek3BaygupZn4WacgPdgUvKzmQWhW94MiJVwsjehIfSNai2RzBuQR1QEpQg/xCL/jDbOB1qxCZdxMIxr9TlG3G2ZDrVklaGpE3Z6LDbZmlZAy4WJNnkZ8284DjIMGW7NKSpsDVEE0xvPF7hY0xJpVonJulva0Hq3r0tA4Bo11w6xRgNCYiDo/9hl4flBeRxqjMZ4OzXscZFWfT92IKH5XSoLQQwH6zzBLEVqIYkVDrzprDagwd1HxTcPGUsBzMfRJPDcL15w1PUN7wOdi8rGq7L/Knq9W6eBiWjkLOjozqu9rLg1X2tKC1EW8GAkVDx6kvQAgPMAeE5C6wLi/+I1/12lH9Yr5OSvKIuoQj1oDUi+U6//mop6dIkQ0GKNugHrOfTn1cjGtJijVcVAS0bgupgBtqLlAcT0ASeUBOUa9bhtNC6i/ki5WRdTd2R47oBM5ZHeE1BrQEDMXTgO5mFfCxZohxcmylT6iazGgPKAQUkOydKXTAhpYeT5VS6LeqV0UIKV+kOpvdqLWO3sXqyTLAvKXbFlKo7rY4D/A1iVZFlAVUno8OQ6gDuvFRlLWlGJKVVQtG9rmiLqsFxtXbSkptWtouzmKHdaL5TTUvJbIxfKoRnSxbuvFMhp44g/2O8UxaChBLWNQh/ViEygLSCcZqRfrtF5sQj04IGJxE7lYm2QMCCQbG1C79WIz1ANbUPBc7Isv9HOnuf//sICi4tjF0sVpOyK+spiYbpRk4wAivkqQWigx3STJOiXHF6vtCl0aIMKlRrtClwaIcLHartClAWILQsIXq+0KXRwgfLHartDlARq4UAY0TLrlAVqSGBAQAwJiQEAMCIgBATEgIAYExICAGBAQAwJiQEAMCGh4QCVt4at6QEJbPENZQyJfZbzBRcnfGm+3anlwQHJpXokJ3V+INAVp+VVJeMFsKZIQ3uwjX8Ta8gdWhgak71vjRQ23W/XWRsK0fvVKEVKtsDT98p92Ky6GBkQ/cCmCqZ2Ks68hoNtPSQslZwFINZX6fgvCb5qJAnEMKp/865wS0WbgYtomKJZxgg9HpKTzYECFfBhOeXsWsQcJNCWgkhCjaa8T0W/BxnYrLfZ222rh6YQuRrAfXRwBkKpPx79caa0CpNZ0QbqgjIIKM2cFHLk+ITBUt/J/o6m6+TbvZcYWpGcNQLvVZ6/dG5KmGii2iQSEkbQMVcHUgWRJ08cg5RWU0Y12HZK1Uy41StqFy4F8fWPFF6tADAiIAQExICAGBMSAgBgQEAMCYkBADAiIAQExICAGBMSAgBgQEAMCYkBADAiIAQExICAGBMSAgBgQEAMCYkBADAiIAQFNACh4gYNXSZ7r0Zg9LKnnDztEmgkgdNQtkjKgXwCgP27dnDE5Q361l/+eXas5MTs5U+ybrZ6loveafAf93Wcv7FyWg00lp968XgAgOcleH4aa81Wu9sos5DY5vUlg0T+rbPeqbHLWmkzhstvkbo+aH1X2/XGZSJMA2rkJl3Y6nASkf39SbNFzwIqz63Cy3N3nlzqXze6Suz26zMMCAO1dJLk71wzUT3GrIxNHaaYSri/tXqtSepLN7pK7PZrnEmKQB6QX/ezNb5WbGa1mKrE4ULNXSf7A1z+3ASA3AdbuKZYISOogbWXvj8wDMnvVRmkqt9vYgsI9i7Qgs0HHINezqanEZuqm2ayOvgxczCV3e8wc7UUBUqdbRZud7YnWl7dbs+bE7pUptfGIbt1l98nNHrNWZVGAVOBRB2rHQWomsx3plMFMYTW92Hijzm6Suz1LGQdBwTUXDykGBMSAgOYIaFZiQEAMCIgBATEgIAYExICAGBAQAwJiQEAMCIgBATEgIAYExICAGBAQAwJiQEAMCIgBATEgoP8Dl5tvt5mAGJsAAAAASUVORK5CYII=" /><!-- --></p>
+</div>
+<div id="replicating-figure-3-of-wb2024" class="section level3" number="3.1.5">
+<h3><span class="header-section-number">3.1.5</span> <strong>Replicating
+Figure 3 of <span class="citation">Wiesen and Beaumont
+(2024)</span></strong></h3>
+<p>We can replicate the pre-pandemic column of Figure 3 of <span class="citation">Wiesen and Beaumont (2024)</span>, which shows the jIRF
+(with confidence interval), the three individual gIRFs, and the sum of
+gIRFs, due to joint shocks from Barclays (BCS), Credit Suisse (CS), and
+Deutsche Bank (DB), for a given response variable.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>plot_fig3_panel <span class="ot">&lt;-</span> <span class="cf">function</span>(boot_model, response, main) {</span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>  shocks <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;BCS&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;DB&quot;</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a>  CI <span class="ot">&lt;-</span> <span class="fl">0.80</span></span>
+<span id="cb44-5"><a href="#cb44-5" tabindex="-1"></a>  horizon <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>H</span>
+<span id="cb44-6"><a href="#cb44-6" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" tabindex="-1"></a>  jIRF_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_jIRF</span>(boot_model, <span class="at">response =</span> response, <span class="at">shocks =</span> shocks, <span class="at">H =</span> H, <span class="at">CI =</span> CI)</span>
+<span id="cb44-8"><a href="#cb44-8" tabindex="-1"></a>  gIRF_sum_CI <span class="ot">&lt;-</span> <span class="fu">bootstrap_gIRF_sum</span>(boot_model, <span class="at">response =</span> response, <span class="at">shocks =</span> shocks, <span class="at">H =</span> H, <span class="at">CI =</span> CI)</span>
+<span id="cb44-9"><a href="#cb44-9" tabindex="-1"></a>  gIRF_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(shocks, <span class="cf">function</span>(s) <span class="fu">bootstrap_gIRF</span>(boot_model, <span class="at">response =</span> response, <span class="at">shock =</span> s, <span class="at">H =</span> H, <span class="at">CI =</span> CI))</span>
+<span id="cb44-10"><a href="#cb44-10" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" tabindex="-1"></a>  g_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;darkgreen&quot;</span>)</span>
+<span id="cb44-12"><a href="#cb44-12" tabindex="-1"></a>  g_ltys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">4</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="#cb44-14" tabindex="-1"></a>  y_range <span class="ot">&lt;-</span> <span class="fu">range</span>(<span class="fu">c</span>(jIRF_CI<span class="sc">$</span>lower, jIRF_CI<span class="sc">$</span>upper,</span>
+<span id="cb44-15"><a href="#cb44-15" tabindex="-1"></a>                      gIRF_sum_CI<span class="sc">$</span>lower, gIRF_sum_CI<span class="sc">$</span>upper,</span>
+<span id="cb44-16"><a href="#cb44-16" tabindex="-1"></a>                      <span class="fu">sapply</span>(gIRF_list, <span class="cf">function</span>(g) <span class="fu">range</span>(g<span class="sc">$</span>lower, g<span class="sc">$</span>upper))))</span>
+<span id="cb44-17"><a href="#cb44-17" tabindex="-1"></a></span>
+<span id="cb44-18"><a href="#cb44-18" tabindex="-1"></a>  <span class="fu">plot</span>(horizon, jIRF_CI<span class="sc">$</span>original, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, H), <span class="at">ylim =</span> y_range,</span>
+<span id="cb44-19"><a href="#cb44-19" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="st">&quot;h steps ahead&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;impulse response&quot;</span>, <span class="at">main =</span> main,</span>
+<span id="cb44-20"><a href="#cb44-20" tabindex="-1"></a>       <span class="at">cex.main =</span> <span class="fl">1.1</span>, <span class="at">cex.lab =</span> <span class="fl">0.95</span>, <span class="at">cex.axis =</span> <span class="fl">0.9</span>)</span>
+<span id="cb44-21"><a href="#cb44-21" tabindex="-1"></a></span>
+<span id="cb44-22"><a href="#cb44-22" tabindex="-1"></a>  <span class="fu">polygon</span>(<span class="fu">c</span>(horizon, <span class="fu">rev</span>(horizon)), <span class="fu">c</span>(gIRF_sum_CI<span class="sc">$</span>lower, <span class="fu">rev</span>(gIRF_sum_CI<span class="sc">$</span>upper)),</span>
+<span id="cb44-23"><a href="#cb44-23" tabindex="-1"></a>          <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">&quot;tan&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb44-24"><a href="#cb44-24" tabindex="-1"></a>  <span class="fu">polygon</span>(<span class="fu">c</span>(horizon, <span class="fu">rev</span>(horizon)), <span class="fu">c</span>(jIRF_CI<span class="sc">$</span>lower, <span class="fu">rev</span>(jIRF_CI<span class="sc">$</span>upper)),</span>
+<span id="cb44-25"><a href="#cb44-25" tabindex="-1"></a>          <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">&quot;gray50&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb44-26"><a href="#cb44-26" tabindex="-1"></a></span>
+<span id="cb44-27"><a href="#cb44-27" tabindex="-1"></a>  <span class="fu">lines</span>(horizon, gIRF_sum_CI<span class="sc">$</span>original, <span class="at">col =</span> <span class="st">&quot;#9A6324&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb44-28"><a href="#cb44-28" tabindex="-1"></a>  <span class="fu">lines</span>(horizon, jIRF_CI<span class="sc">$</span>original, <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">type =</span> <span class="st">&quot;o&quot;</span>, <span class="at">pch =</span> <span class="dv">16</span>)</span>
+<span id="cb44-29"><a href="#cb44-29" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(shocks)) {</span>
+<span id="cb44-30"><a href="#cb44-30" tabindex="-1"></a>    <span class="fu">lines</span>(horizon, gIRF_list[[i]]<span class="sc">$</span>original, <span class="at">col =</span> g_colors[i], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> g_ltys[i])</span>
+<span id="cb44-31"><a href="#cb44-31" tabindex="-1"></a>  }</span>
+<span id="cb44-32"><a href="#cb44-32" tabindex="-1"></a>  <span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb44-33"><a href="#cb44-33" tabindex="-1"></a></span>
+<span id="cb44-34"><a href="#cb44-34" tabindex="-1"></a>  <span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">cex =</span> <span class="fl">0.6</span>,</span>
+<span id="cb44-35"><a href="#cb44-35" tabindex="-1"></a>         <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&quot;jIRF: shocks from BCS, CS, &amp; DB&quot;</span>, <span class="st">&quot;80% CI for jIRF&quot;</span>,</span>
+<span id="cb44-36"><a href="#cb44-36" tabindex="-1"></a>                    <span class="st">&quot;gIRF: shock from BCS&quot;</span>, <span class="st">&quot;gIRF: shock from CS&quot;</span>, <span class="st">&quot;gIRF: shock from DB&quot;</span>,</span>
+<span id="cb44-37"><a href="#cb44-37" tabindex="-1"></a>                    <span class="st">&quot;sum of gIRFs&quot;</span>, <span class="st">&quot;80% CI for sum of gIRFs&quot;</span>),</span>
+<span id="cb44-38"><a href="#cb44-38" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;gray50&quot;</span>, g_colors, <span class="st">&quot;#9A6324&quot;</span>, <span class="st">&quot;tan&quot;</span>),</span>
+<span id="cb44-39"><a href="#cb44-39" tabindex="-1"></a>         <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">NA</span>, g_ltys, <span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="cn">NA</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="cn">NA</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">16</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb44-40"><a href="#cb44-40" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fu">adjustcolor</span>(<span class="st">&quot;gray50&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>), <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fu">adjustcolor</span>(<span class="st">&quot;tan&quot;</span>, <span class="at">alpha.f =</span> <span class="fl">0.5</span>)),</span>
+<span id="cb44-41"><a href="#cb44-41" tabindex="-1"></a>         <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">merge =</span> <span class="cn">TRUE</span>, <span class="at">seg.len =</span> <span class="dv">2</span>)</span>
+<span id="cb44-42"><a href="#cb44-42" tabindex="-1"></a>}</span></code></pre></div>
+<p>Now produce the first panel of Figure 3’s pre-pandemic column, the
+pre-pandemic impulse response of Bank of America:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="fu">plot_fig3_panel</span>(boot_model, <span class="st">&quot;BAC&quot;</span>, <span class="st">&quot;Pre-Pandemic Impulse Response of Bank of America&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The remaining panels of Figure 3 (Citigroup and JP Morgan Chase) can
+be reproduced the same way, by calling <code>plot_fig3_panel()</code>
+with <code>response = &quot;C&quot;</code> or <code>response = &quot;JPM&quot;</code>.</p>
+</div>
+</div>
+<div id="lw2021-and-lw2025---joint-spillover-metrics" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> <span class="citation">Lastrapes and Wiesen (2021)</span> and <span class="citation">Lastrapes and Wiesen (2025)</span> - Joint Spillover
+Metrics</h2>
+<p>We refer users to the works of <span class="citation">Lastrapes and
+Wiesen (2021)</span> and <span class="citation">Lastrapes and Wiesen
+(2025)</span> to understand the concept of <strong>joint spillover
+metrics</strong>, and to <span class="citation">Diebold and Yilmaz
+(2012)</span> and <span class="citation">Diebold and Yılmaz
+(2014)</span> for the <strong>generalized variant</strong>.</p>
+<p>As with the joint impulse response function and the joint forecast
+error variance decomposition (from section 3.1), you must estimate a
+K-variable VAR model first before computing the (non rolling window)
+spillover metrics. As illustrated previously, say you want to load the
+pre-pandemic bank volatility data from <span class="citation">Wiesen and
+Beaumont (2024)</span>. For more information about this dataset, see
+section 3.1.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="co">#Load and prepare the data as follows:</span></span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a><span class="fu">data</span>(Volatility_data_pre)</span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>Data <span class="ot">&lt;-</span> Volatility_data_pre</span>
+<span id="cb46-5"><a href="#cb46-5" tabindex="-1"></a>date <span class="ot">&lt;-</span> <span class="fu">attr</span>(Volatility_data_pre, <span class="st">&quot;date&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="co">#------------- Run a VAR model------</span></span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="co"># Estimate VAR with 1 lag, as used in the paper</span></span>
+<span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a>VAR_model <span class="ot">&lt;-</span> <span class="fu">VAR</span>(Data, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">&quot;const&quot;</span>)</span></code></pre></div>
+<p>Once the VAR_model object above is available, the
+<code>jointspill()</code> function can be used to compute the joint
+spillover metrics.</p>
+<p>The <code>jointspill()</code> function produces the following
+results:</p>
+<ol style="list-style-type: decimal">
+<li>The K x K <strong>gFEVD matrix</strong> (<code>gFEVD</code>)</li>
+<li>The <strong>joint total spillover from all others to variable
+<em>i</em></strong> (<code>jnt_from_others_to_i</code>)</li>
+<li>The <strong>joint total spillover from variable <em>i</em> to all
+others</strong> (<code>jnt_to_others_from_i</code>)</li>
+<li>The <strong>joint net total spillover</strong>
+(<code>jnt_net</code>)</li>
+<li>The <strong>joint spillover index</strong> (<code>jSOI</code>)</li>
+<li>The <strong>lambda scaling factor</strong>
+(<code>lambda</code>)</li>
+<li>The <strong>scaled gFEVD matrix</strong>
+(<code>gFEVD_tilde</code>)</li>
+</ol>
+<p>As before, <code>H</code> denotes the number of forecast periods
+ahead (i.e., the forecast horizon).</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a>jointspill_results <span class="ot">&lt;-</span> <span class="fu">jointspill</span>(VAR_model, <span class="at">H =</span> <span class="dv">30</span>)</span></code></pre></div>
+<p>If users want to extract any of the seven outputs calculated by
+<code>jointspill()</code>, they can use the <code>$</code> extraction
+operator. For example, <code>jointspill_results$gFEVD</code> returns the
+K x K generalized forecast error variance decomposition (gFEVD)
+matrix.</p>
+<p>Additionally, users can easily view outputs (1) through (5) using the
+generic <code>summary()</code> function. This summary presents a
+well-structured table:</p>
+<ul>
+<li>The upper-left K x K portion contains the gFEVD matrix.</li>
+<li>The last column shows the <strong>joint total spillover from all
+others</strong> to each variable (<em>jnt_from_others_to_i</em>).</li>
+<li>The second-to-last row displays the <strong>joint total spillover
+from each variable to all others</strong>
+(<em>jnt_to_others_from_i</em>).</li>
+<li>The final row contains the <strong>joint net total
+spillovers</strong> (<em>jnt_net</em>).</li>
+<li>The <strong>joint spillover index (jSOI)</strong> is reported in the
+bottom-right corner of the table.</li>
+</ul>
+<p>This summary can be generated using:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="fu">summary</span>(jointspill_results)</span></code></pre></div>
+<pre><code>##                     BAC     BK    BCS      C     CS     DB     GS    JPM     MS
+## BAC               93.42  19.34   7.17  66.63  11.80   6.03  58.01  65.82  43.35
+## BK                36.37  84.86   2.60  31.33   3.61   1.71  36.30  28.28  35.77
+## BCS               11.06   4.71  96.12  11.38   6.48  11.52  12.56  12.19   9.83
+## C                 58.16  18.57   8.31  96.68  11.78   5.31  48.30  58.62  39.35
+## CS                16.24   5.63   5.83  15.67  95.41  20.55  13.30  14.28  11.65
+## DB                11.74   4.65   8.76  10.43  21.98  93.80  12.02   9.59   9.84
+## GS                57.90  16.23   8.78  53.72   8.48   5.00  92.32  55.65  40.69
+## JPM               62.05  18.94   9.35  67.24  11.21   5.92  53.67  93.60  37.69
+## MS                60.04  26.11   5.95  46.35   9.13   5.82  60.51  43.31  84.54
+## STT               27.04  28.51   2.77  26.51   3.34   3.40  29.74  19.13  33.06
+## WFC               43.19  16.21   4.44  45.81   5.97   3.55  38.15  54.34  24.60
+## To others from i  95.07  39.37  15.84  92.92  23.23  17.04  89.82  89.48  70.81
+## NET               12.43 -13.67  -6.72  19.65  -9.53 -16.36  17.68   6.64  -4.48
+##                     STT    WFC From others to i
+## BAC               16.94  47.92            82.64
+## BK                15.53  25.64            53.04
+## BCS                5.18   6.03            22.56
+## C                 23.29  41.56            73.27
+## CS                 7.62  10.15            32.76
+## DB                 8.13   7.49            33.40
+## GS                16.97  41.66            72.13
+## JPM               19.83  55.57            82.84
+## MS                15.86  34.36            75.28
+## STT               79.03  16.47            50.75
+## WFC               11.97  95.83            60.97
+## To others from i  35.01  71.06             jSOI
+## NET              -15.74  10.09            58.15</code></pre>
+<p>As an example to interpret the results, the value in the first row
+and second column (the 1,2 element of the gFEVD matrix) implies that
+19.34% of Bank of America’s (BAC) forecast error variance can be
+explained by the shocks of Bank of New York Mellon (BK). The first value
+in the “FROM Others” column (the first element of
+<strong>jnt_from_others_to_i</strong>) implies that 82.64% of Bank of
+America’s forecast error variance can be jointly explained by the shocks
+of the other ten banks in the model. The first value in the “TO Others”
+row (the first element of <strong>jnt_to_others_from_i</strong>) implies
+that the joint total spillover from Bank of America to the other ten
+banks is 95.07%. Note that this value can exceed 100%. The first value
+in the “Net” row (the first element of <strong>jnt_net</strong>) implies
+that the joint net total spillover for Bank of America is 12.43%.
+Because this value is positive, Bank of America transmits more shocks to
+others banks than it receives. Lastly, the value in the bottom-right is
+the joint spillover index (<strong>jSOI</strong>). This indicates that,
+on average, 58.15% of a bank’s forecast error variance can be explained
+by jointly conditioning on the shocks of the other ten banks in the
+model.</p>
+<p>Similar to the joint spillover results, the generalized spillover
+metrics of <span class="citation">Diebold and Yilmaz (2012)</span> and
+<span class="citation">Diebold and Yılmaz (2014)</span> can also be
+estimated using the <code>genspill()</code> function.</p>
+<p>This function returns the following outputs:</p>
+<ol style="list-style-type: decimal">
+<li>The K x K generalized spillover table (<strong>gSOT</strong>)</li>
+<li>The generalized total spillover <strong>from all others</strong> to
+variable <em>i</em> (<strong>gen_from_others_to_i</strong>)</li>
+<li>The generalized total spillover <strong>from variable
+<em>i</em></strong> to all others
+(<strong>gen_to_others_from_i</strong>)</li>
+<li>The <strong>generalized net</strong> total spillover
+(<strong>gen_net</strong>)</li>
+<li>The <strong>generalized spillover index</strong>
+(<strong>gSOI</strong>)</li>
+</ol>
+<p>You can compute these metrics by running:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="co">#Compute the generalized spillover results using the estimated VAR model with a time horizon of H=30.</span></span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a>genspill_results <span class="ot">&lt;-</span> <span class="fu">genspill</span>(VAR_model, <span class="at">H =</span> <span class="dv">30</span>)</span></code></pre></div>
+<p>As in <span class="citation">Diebold and Yilmaz (2012)</span> and
+<span class="citation">Diebold and Yılmaz (2014)</span>, users can use
+the generic <code>summary()</code> function to generate a summarized
+version of the generalized spillover results.</p>
+<ul>
+<li>The <strong>upper-left K x K</strong> part of the table represents
+the <strong>gSOT matrix</strong>.</li>
+<li>The <strong>last column</strong> shows the generalized total
+spillover <strong>from all others</strong> to each variable.</li>
+<li>The <strong>second-to-last row</strong> displays the generalized
+total spillover <strong>to all others</strong> from each variable.</li>
+<li>The <strong>last row</strong> contains the generalized
+<strong>net</strong> total spillover.</li>
+<li>The <strong>bottom-right</strong> cell presents the overall
+<strong>generalized spillover index (gSOI)</strong>.</li>
+</ul>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">summary</span>(genspill_results)</span></code></pre></div>
+<pre><code>##                     BAC     BK    BCS      C     CS     DB     GS    JPM     MS
+## BAC               21.40   4.43   1.64  15.27   2.70   1.38  13.29  15.08   9.93
+## BK                12.04  28.10   0.86  10.38   1.20   0.57  12.02   9.37  11.84
+## BCS                5.91   2.52  51.38   6.08   3.47   6.16   6.72   6.52   5.26
+## C                 14.19   4.53   2.03  23.58   2.87   1.29  11.78  14.30   9.60
+## CS                 7.50   2.60   2.69   7.24  44.10   9.50   6.15   6.60   5.38
+## DB                 5.91   2.35   4.41   5.26  11.08  47.27   6.06   4.84   4.96
+## GS                14.57   4.08   2.21  13.52   2.13   1.26  23.23  14.00  10.24
+## JPM               14.26   4.35   2.15  15.46   2.58   1.36  12.34  21.51   8.66
+## MS                15.32   6.66   1.52  11.83   2.33   1.48  15.44  11.05  21.57
+## STT               10.05  10.60   1.03   9.85   1.24   1.26  11.05   7.11  12.29
+## WFC               12.55   4.71   1.29  13.31   1.73   1.03  11.09  15.79   7.15
+## To others from i 112.31  46.84  19.83 108.19  31.33  25.30 105.93 104.66  85.31
+## NET               33.72 -25.06 -28.79  31.78 -24.56 -27.43  29.16  26.17   6.88
+##                     STT    WFC From others to i
+## BAC                3.88  10.98            78.60
+## BK                 5.14   8.49            71.90
+## BCS                2.77   3.22            48.62
+## C                  5.68  10.14            76.42
+## CS                 3.52   4.69            55.90
+## DB                 4.10   3.77            52.73
+## GS                 4.27  10.48            76.77
+## JPM                4.56  12.77            78.49
+## MS                 4.05   8.77            78.43
+## STT               29.38   6.12            70.62
+## WFC                3.48  27.85            72.15
+## To others from i  41.45  79.45             gSOI
+## NET              -29.17   7.30            69.15</code></pre>
+<p>As an example to interpret the results, the value in the first row
+and second column (the 1,2 element of the gSOT matrix) shows the
+generalized bilateral spillover from Bank of New York Mellon (BK) to
+Bank of America (BAC) is 4.43%. Because of the row-sum normalization
+used by DY <span class="citation">(Diebold and Yilmaz 2012; Diebold and
+Yılmaz 2014)</span>, this 4.43% is NOT the same thing as the percent of
+Bank of America’s forecast error variance explained by the shocks of
+Bank of New York Mellon. The first value in the “FROM Others” column
+(the first element of gen_from_others_to_i) shows the generalized total
+spillover from the other ten banks to Bank of America is 78.60%. Because
+of the row-sum normalization and single-variable conditioning sets used
+by DY <span class="citation">(Diebold and Yilmaz 2012; Diebold and
+Yılmaz 2014)</span>, this 78.60% is NOT the same thing as the percent of
+Bank of America’s forecast error variance jointly explained by the
+shocks of the other ten banks in the model. The first value in the “TO
+Others” row (the first element of gen_to_others_from_i) shows the
+generalized total spillover from Bank of America to the other ten banks
+is 112.31%. The first value in the “Net” row (the first element of
+gen_net) implies that the generalized net total spillover for Bank of
+America is 33.72%. Lastly, the value in the bottom-right is the
+generalized spillover index (gSOI) of 69.15%. Because of the row-sum
+normalization and single-variable conditioning sets used by DY <span class="citation">(Diebold and Yilmaz 2012; Diebold and Yılmaz
+2014)</span>, this 69.15% is not the same thing as the average percent
+of a bank’s forecast error variance jointly explained by the shocks of
+the other ten banks in the model.</p>
+<div id="rolling-window-analyses" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> <strong>Rolling
+Window Analyses</strong></h3>
+<p>To perform rolling window analyses for either the <strong>joint
+spillover metrics</strong> or its <strong>generalized variant</strong>,
+users must first estimate a rolling window VAR model. The parameter
+<code>win</code> specifies the window size. For example, the following
+line of code will estimate a rolling window VAR model of one lag and a
+window length of 150 periods using the pre-pandemic bank volatility data
+from previous sections</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="co"># p is the lag</span></span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="co"># win is the window size</span></span>
+<span id="cb54-3"><a href="#cb54-3" tabindex="-1"></a><span class="co"># const is TRUE if you want to include a constant, or FALSE if not.</span></span>
+<span id="cb54-4"><a href="#cb54-4" tabindex="-1"></a><span class="co"># dates is the date vector extracted earlier (attr(Volatility_data_pre, &quot;date&quot;));</span></span>
+<span id="cb54-5"><a href="#cb54-5" tabindex="-1"></a><span class="co"># VAR_roll() uses it (together with win) to compute the end-of-window date for each</span></span>
+<span id="cb54-6"><a href="#cb54-6" tabindex="-1"></a><span class="co"># rolling window, which is carried through as end_of_window_date in its output.</span></span>
+<span id="cb54-7"><a href="#cb54-7" tabindex="-1"></a>rolling_model <span class="ot">&lt;-</span> <span class="fu">VAR_roll</span>(<span class="at">data =</span> Data, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">win =</span> <span class="dv">150</span>, <span class="at">const =</span> <span class="cn">TRUE</span>, <span class="at">dates =</span> date)</span></code></pre></div>
+<pre><code>## rolling window progress (%): 8.01 
+## rolling window progress (%): 16.03 
+## rolling window progress (%): 24.04 
+## rolling window progress (%): 32.05 
+## rolling window progress (%): 40.06 
+## rolling window progress (%): 48.08 
+## rolling window progress (%): 56.09 
+## rolling window progress (%): 64.1 
+## rolling window progress (%): 72.12 
+## rolling window progress (%): 80.13 
+## rolling window progress (%): 88.14 
+## rolling window progress (%): 96.15 
+## rolling window progress (%): 100</code></pre>
+<p>If users want to extract any of the four outputs produced by the
+<code>VAR_roll()</code> function, they can do so using the
+<code>$</code> extraction operator. The available components are:</p>
+<ol style="list-style-type: decimal">
+<li><code>VARcoeff</code> - VAR coefficient matrices for each rolling
+window</li>
+<li><code>constant</code> - Intercepts for each rolling window</li>
+<li><code>Sigma</code> - Residual (shock) covariance matrices for each
+rolling window</li>
+<li><code>end_of_window_date</code> - The end-of-window date for each
+rolling window, computed from the <code>dates</code> and
+<code>win</code> inputs</li>
+</ol>
+<p>For example, <code>rolling_model$VARcoeff</code> will return the
+rolling VAR coefficients.</p>
+<p>Compute the joint spillover results using the rolling window VAR
+model with a forecast horizon <code>H</code>. The <code>dates</code>
+input to <code>VAR_roll()</code> should be the date vector extracted
+earlier (<code>date &lt;- attr(Volatility_data_pre, &quot;date&quot;)</code>). The
+“date” input should not be truncated or shortened. The R code uses the
+<code>win</code> input together with <code>dates</code> to calculate the
+end-of-window date for each rolling window.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="co"># H is the horizon.</span></span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a><span class="co"># jointspill_roll() carries the end-of-window dates through from rolling_model</span></span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a><span class="co"># (computed by VAR_roll() using the win input), so no separate dates argument is needed.</span></span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>joint_spill_results_roll <span class="ot">&lt;-</span> <span class="fu">jointspill_roll</span>(rolling_model, <span class="at">H =</span> <span class="dv">30</span>)</span></code></pre></div>
+<p>As an example, if users wish to plot the jSOI over rolling windows,
+they can run the following.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="co">#Plot the joint spillover index over rolling windows.</span></span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a><span class="fu">plot</span>(joint_spill_results_roll<span class="sc">$</span>end_of_window_date, joint_spill_results_roll<span class="sc">$</span>jSOI, </span>
+<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(joint_spill_results_roll<span class="sc">$</span>jSOI),</span>
+<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;jSOI&quot;</span>,</span>
+<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;jSOI over rolling windows&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the 1,2 element of the gFEVD matrix (the
+percent of Bank of America’s forecast error variance explained by the
+shocks of Bank of New York Mellon) over rolling windows, they can run
+the following</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="co">#Plot the 1,2 element of the gFEVD matrix over the rolling windows.</span></span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a><span class="co">#This is the fraction of the forecast error variance of BAC</span></span>
+<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a><span class="co">#that can be explained by the shocks of BK over rolling windows.</span></span>
+<span id="cb58-4"><a href="#cb58-4" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="#cb58-5" tabindex="-1"></a><span class="fu">plot</span>(joint_spill_results_roll<span class="sc">$</span>end_of_window_date,</span>
+<span id="cb58-6"><a href="#cb58-6" tabindex="-1"></a>     joint_spill_results_roll<span class="sc">$</span>gFEVD[<span class="st">&quot;BAC&quot;</span>,<span class="st">&quot;BK&quot;</span>,], <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb58-7"><a href="#cb58-7" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(joint_spill_results_roll<span class="sc">$</span>gFEVD[<span class="st">&quot;BAC&quot;</span>,<span class="st">&quot;BK&quot;</span>,]),</span>
+<span id="cb58-8"><a href="#cb58-8" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb58-9"><a href="#cb58-9" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Spillover from BK to BAC&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the joint total spillover from all other banks
+to Bank of America over rolling windows, they can run the following.</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="do">##Plot the joint total spillover from all others to BAC over</span></span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a><span class="co">#rolling windows.</span></span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a><span class="fu">plot</span>(joint_spill_results_roll<span class="sc">$</span>end_of_window_date, joint_spill_results_roll<span class="sc">$</span>jnt_from_others_to_i[<span class="st">&quot;BAC&quot;</span>,],</span>
+<span id="cb59-5"><a href="#cb59-5" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(joint_spill_results_roll<span class="sc">$</span>jnt_from_others_to_i[<span class="st">&quot;BAC&quot;</span>,]),</span>
+<span id="cb59-7"><a href="#cb59-7" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb59-8"><a href="#cb59-8" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Joint Spillover From Others to BAC&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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youHp5fKYe3iujvEAulJ1g0gY76RXu7egTIBkrtgG1fUtsQLo6H0FOumzxhAfnqPPQVxZQG0tlG0BUBeSdfddwYUta6CdACQi9W7KAcgvYu6OwgacWHnIRazrp4TevHvN3cd6yXcWrlFGQCZW14aOJphVC6Hrrrpada1xJKobT1phGUAZKNAY6L1epBtTTc9zbpJ707z9dpoF2VYB9nr5S/VAjEokJ5kXS0G1405YIQQND6glV7ZS6e8pX8dJby7PLrpSdblfRIeC5eesEqs+GYVioCACAiIgIAICIiAgAgIiICACAiIgIAICIiAgAgIiICACAiIgIAICIiAgAgIiICACAiIgIAICIiAgAgIiICACAgoO6DSbMNt79HpbClYFe2HM3pP/owVaquRYZ2yq8MqP6DI7qV2W3vt4hkEqMt3Fx0QoB7NOW1Az9d/utY73uXOlA9u74raEvO0LOq91Gqrann5q2hhoJAu4GfUNbgMpdpYLy2KlFXRGbqDtFdAcpe8+Feq3c1281Nxo/Y+2eu9Uo1ayC1izwpQu5At4GXUFdkMcluZLKEsrtTOzkPb5erLBukrHWWeljd6S1ypAenmiZFhAclBUv7x8vHp5Z0G1CrkCngZZTmX4Vlu45SvXPGBu7Cb2msPulF/tLsmWuh2ib8WkPj/+c33rx5ELt3CViG/gM0oyzWsrotCF9WvU3YpTgBo1QUkG2tDann19Jtf39yVi8oHtGoCkqfrjFK1VRF1Lv5pelDqvT4H2INEbPnHoiq/ub2ptvcgL6NUM4MdYmkbOKUmAGS2MEdiUPX06g9X1eqLl3cNQK6QK+BlVMVsBr0lu/D4JmkCQOaelsgspuettZyhfUB1IVvAy6hkM+jOYycFdR3KhH60t1nM9BE993bXQd61drupG4Da66Cqve3aZVD7fyWT0q6DUvYB880qEAEBERAQAQEREBABAREQEAEBERAQAQEREBABAREQEAEBERAQAQEREBABAREQEAEBERAQAQEREBABAf0fzbluRGkKZj4AAAAASUVORK5CYII=" /><!-- --></p>
+<p>If users wish to plot the joint total spillover from Bank of New York
+Mellon to the other banks over rolling windows, they can run the
+following.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="do">###Plot the joint total spillover to all others from BK over</span></span>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a><span class="co">#rolling windows.</span></span>
+<span id="cb60-3"><a href="#cb60-3" tabindex="-1"></a><span class="fu">plot</span>(joint_spill_results_roll<span class="sc">$</span>end_of_window_date, joint_spill_results_roll<span class="sc">$</span>jnt_to_others_from_i[<span class="st">&quot;BK&quot;</span>,],</span>
+<span id="cb60-4"><a href="#cb60-4" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(joint_spill_results_roll<span class="sc">$</span>jnt_to_others_from_i[<span class="st">&quot;BK&quot;</span>,]),</span>
+<span id="cb60-6"><a href="#cb60-6" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb60-7"><a href="#cb60-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Joint Spillover to Others from BK&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the joint net total spillover for Barclays over
+rolling windows, they can run the following.</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="co">#Plot the joint net total spillover for BCS over rolling windows.</span></span>
+<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a><span class="fu">plot</span>(joint_spill_results_roll<span class="sc">$</span>end_of_window_date,</span>
+<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>     joint_spill_results_roll<span class="sc">$</span>jnt_net[<span class="st">&quot;BCS&quot;</span>,], <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(joint_spill_results_roll<span class="sc">$</span>jnt_net[<span class="st">&quot;BCS&quot;</span>,]),</span>
+<span id="cb61-5"><a href="#cb61-5" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb61-6"><a href="#cb61-6" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Joint Net Total Spillover for BCS&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAxlBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZmYAZpAAZrY6AAA6ADo6AGY6OgA6OmY6OpA6ZpA6ZrY6kLY6kNtmAABmADpmOgBmOjpmZgBmZmZmkLZmkNtmtrZmtttmtv+QOgCQZjqQkDqQkGaQkLaQtpCQttuQ27aQ29uQ2/+2ZgC2Zjq2ZpC2kDq2kGa225C227a229u22/+2/7a2/9u2///bkDrbtmbbtpDb27bb29vb/7bb////tmb/25D/27b//7b//9v///+L6VgRAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAMj0lEQVR4nO2di3bbxhGGIcFSS9lxm0p207ih3CROibRJq0aI3Ygyifd/qextFnsDBlcSov7/HFMgdnaw+Lg7uwDHYFZBrcqO3YClC4AYARAjAGIEQIwAiBEAMQIgRgDECIAYARAjAGIEQIwAiBEAMQIgRgDECIAYARAjAGIEQIwAiBEAMQIgRgDECIAYARAjAGIEQIwAiBEAMQIgRklA2yxbezv2t9nlg2+z/9e92Sq09e4mW7WYkBptogPtf/oiy87+fBc0TpnUL82nltb+x6ss+7KxuDTNpOPuhwL6/PbcOXtZGAHyTdKAHJvwQGJTN9VvylhAW+nzurG4tA1VDdu97QYoVpF5Z79OAApMkoAcGyXnnEuvpYGGAyqzs01rsdW1/pBSVgTo41+z7MXXD9Ru4fufP2bZxcacsWl5oTcNoL2wOPvywTcx50RwrF+y+fhW/H298QAV2dk3oovdqrYIkP8RlS7uUj3IcaeOp5tvGyLb/f3b7PyOGqsQ2UpesXijm/x4JVsrcbUAMjRFIwiQ6fSbCJDArQGJV6mL+xZAtV9js7V+PUCqsmjpdd0FycQFVLsz7S7kdt0QY6D9EqC6kldsAX2UhxUHOG8BJJqmqVzXgMRHqHb44+f8K/FOAyrkR0En5Q0OC8jxq21EyR8fdCV/iJ19/V97DOn3VzlCQ0B+M/VndO01RJRd3lX/J7ey/7htCIpJGvKqBZA5QfnHAlpT5/MB/SwaogDpxunPoQmQ47e2+SSnrFUiSF98eKjsTGnb4gBy3ZX6RSBwG1K6IVUD8it5xdRXv9G9txkQtVV6tDFoQ8HYB3QvAsYPcr9w6QzDJCDXr7HZv6cA7sXdX7+wo8T4sm2JA5FyJw6/tv3KNsSLy6U7kstEsROk2wHRrCTfsICEqz/I/duMBeT6tUMsu/ju000ISNT59O1V5hzOtqV+8dzJY+hh5TYkBuRVCop1oz/fmKgRANIN6d+DNHnVg9a+rw49SJ/Szgekd1b+UOR6kDy/f1CQsQ3p14NMo82hwiBNsS4YpzwgNWmsvMVQ5xhk5wQ3SAtPZ+8e1HSi7DrFID2ywmVrDCiIQakedEtznQ+Ihq45WDiL1YAcr/pgZWbGgohuon9a8xiQP4PoyHH5IBc83hCro8Gq6yxW2VVrc0NSs1g6BunlTRiDzIJj7Rg766Aa0DZz1kFyQ3aheh0kDR0TD5C7BlE2v9xaEolLDeWjqLdb1kGVcqiP6TQkAchfByUBqZ3xpcb+J9GHXn/Qb9Rq811VJQDJderFnQNINk0C+PxeOFBXeo6JD6j2a2zkLHbxobRj2VRQs5he7Ypj/PJe+21YSb/TleqhVTckBciplAb0uu1idXkKr9kOJwBiBECMAIjREwF0PAEQIwBiBECMAIgRADECIEYAxAiAGAEQIwBiBECMAIgRADECIEYAxAiAGAEQIwBiBECMAIgRADECIEYAxAiAGAEQIwBiNDGg7MnoWICmdTefAIgRADECoFp5ntgJQLUAiBEAMcqrBKEDA+q/vDiglgBoLneTCIBC5d5mXgFQIABiBECMXEBqjgcgTzkAtcsHpF5jIwAy286rp2cNyAECQAnFgBKXYwBE2/oPADlKAIoHGQDRdrhhBEC0HW4YARBthxtGAETb4YbRTIDoaQiN/8N2GYASXA4DqKTHx22bniM3D6DkXeVm66MB2t9aLGXD4+cWCygkNAug3Y19JM/WH2Qz35PuAYhuAOX2bRVuKT3bHmQA5UcBJGKQ6ULLjUE1oOBGR+BjplnMPJSn+QGYywEU3Qk6CKBDuzPqDCi3gOJbZQBUKUAUfgAoaQhAjGE9f6lKuVfm/n2egPIAUJ4AlJ8MoOi7Cb6GxwSA4hq5fyGfJwDRHgCKqvlRG4CiaicJqPFLiXSNVkDVCQLKewIKcqXysNgpPzag8MMcoJMGlE8BqF4WdwbUauksswEo7dBZGR0XkMYzDSDlaRJA1YIAmVVaP0ThpEM+8nwqQNXRAKXuSXc+L6eCe8fd9MIJAVXHA5Ry13lkkD2hoGsC3QN7hLMOVksCJNXnXindKbU3S+cAtJRpntQbkHu73SRgApBjOj8g0kIAdW5z/U0fze52iHnflDJOumuRgBqTlqmockOR9XDSgIKrax6QuWLy7ns9C0A53URPh6VwqRNfZ3bQAgANyA+qY0teR97IJozDTxTQkPwgmpTslBSfRmKiepqAhmV35A6g1PI6DS2w6dS+owNqzg9qcxcDciNwanwlfHS7juBNrBbVg3LvyjUGxKsToF5XfgvKD8pp7Ve/r4uq6QD1uzReUH4QXYHWgCpns9vnzto1TI/NWsw6yF6FOisi/7Kii1sGUI97Ri0NHWk42F1uX+pd5pZPlwmMfLTYdfdTayZA8vfb9K/79ZjF7Eu9iwD1udvcUtqfz1xBWv1EqfyJvHJUGnD9ZcVpAdLT/P5W/txh9x6UkAOo25HbAA0ZYDMvFIvLh2kAdV67tFjSvaOemnehWKzGAqIlYmdAjZ3EXAN381NrphhksOxumq7n+wLqqGZA/QeX1myzmB5k+9sDA2ocRQsDNJG7vMdtQlOhEVB3J57mBORcsw501x9QY5gBIKoSmed9onykxQPqe3EZozh9QD0PG9+J7LHSjPRcAA2dxJY/i00BqPPtpISeB6CeHlydPqARw0tq+YB6C4C4SuHbMXxOH9CIGV5p4YCGuM5b3vUXADFaQBrw1PLH5RMDNJc7Vx6gsXwAiNMJAqoAiBEAMaLvY6sJ+JwwoM4pM+06RUAVADHq+YV+q04VUN49p6hdy8mTnlA55VwtFtCxnqNoRP/JZbGAjvYUPCPKc1ksoGF50tNp8YAW04Mm8LWgPOkJtXhAx3qOImnsfVZHJ7kOmoxOBUCsZgX0eLVuKnregCgCxWvpA/2E39IB0eR1tB40oWabxeT8BUAtKs42ANQqccEKQK16vHrRAujJaD5A8qZQI6CRh+NaM2/1qeq05SiOPBwAAdC4wwEQAI073GkAGiMAGnc4AAKgkxMAMQIgRgDECIAYARAjAGIEQIwAiBEAMQIgRgDECIAYTQ9IZcKqW2rbLDvb6J2Pr9R3+fYhcVW6fLR32lOXb83XPEO/iJkc0P5WNKvMVqJpYmOrW7y7UckO8iFxW9vUuHycd/9LX6e8Mk+mG6TJAekmluf3+s5sIVu21dkg+9sV7anozq1bPs777kbuoeRJp7xqfqphB80Ug8RnZ89FJoVsY0Bx+TjvurtQp6nL1ZvZ7qIPVXF+//hSNVg3cRsPsUT5KO8GkHHvlRfDO9BMgGQikfeJ0pk4YTRVPsa76TMGkFuuB99AzQJoS1E0ACA/SdvdBwNq9K6CdAKQjdVDNAcgnYgWDwIvLgweYk3eBSERrf/3ZhN5LxqzljtoBkClm6hXxlHibCOXQ9dx+TjvWmJJFHofNcJmAFQ/a9GZaJ0eRGcTl4/zbsrjab4l36uDZlgH0eflLtUSMShRPsq7WgxuvTlgghA0PaBSr+xlo5ylfx0lnP/lEZeP8i6zlB0WtnzEKrHCxSorAGIEQIwAiBEAMQIgRgDECIAYARAjAGIEQIwAiBEAMQIgRgDECIAYARAjAGIEQIwAiBEAMQIgRgDECIAYARAjAGIEQIxmB1SYNNwwRydKKSiz8OGMzpM/myqF8gy2Y7I6SPMDasheCs+1UxZPL0Ax3yFaEKAOp3PagHY3f7/RGe8yM+Vbm7uiUmIer5xcapWqWlz+Js4wUUlXcA31EaxBoRLrpUf5s91ZNHR76aCAZJa8+Feo7GZKfsrWKveJPu9SndRKpojtFKCwElVwDPWByECmlekffl/rjTFp0ocL0tc6yjxerXVKXKEB6dMTI4MAyUFS/O3y4fHlRgMKKtkKjqGsZw12Mo1TvrPVe2Zh+zpoD1qrF91cEy30eYlXAiT+7t58/+peWOkzDCq5FchQ1vO8brNMV9Xvx2QpHgFQGQOSJ0shtbh+/NNvbzbFqnIBlT4gubs2lKq9iqhz/rPpQWP/r88Ce5CILf9eVcVfbtdVew9yDKV8Axpi4xI4pY4AyKQwN8Sg6vHVV9dV+eLlxgNkK9kKjqGqRgY6JTtz+I7SEQCZ/9PSMIvpeWsrZ2gXUF2JKjiGSmSgOw9NCupzKEb0o4PNYqaP6Lk3Xgc5n7XNpvYAheugKky7tgYq/1cyKWgdNCYPGBerjACIEQAxAiBGAMQIgBgBECMAYgRAjACIEQAxAiBGAMQIgBgBECMAYgRAjACIEQAxAiBGAMQIgBgBECMAYvQ74YtDe3ZMBuEAAAAASUVORK5CYII=" /><!-- --></p>
+<p>The command <code>genspill_roll()</code> can be used to compute the
+generalized spillover metrics over rolling windows. Notice that the
+arguments of the <code>genspill_roll()</code> command are:</p>
+<ol style="list-style-type: decimal">
+<li><code>rolling_model</code> - the rolling window VAR object</li>
+<li><code>H</code> - the forecast error horizon</li>
+</ol>
+<p>Like <code>jointspill_roll()</code>, the end-of-window dates are
+carried through from <code>rolling_model</code>, so there is no separate
+<code>dates</code> argument.</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="co">#--------------- Diebold-Yilmaz Spillover rolling window-------</span></span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a><span class="do">##Compute the generalized spillover results using the rolling window VAR</span></span>
+<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a><span class="co">#model with a time horizon of H=30.</span></span>
+<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a>gen_spill_result_roll <span class="ot">&lt;-</span> <span class="fu">genspill_roll</span>(rolling_model, <span class="at">H =</span> <span class="dv">30</span>)</span></code></pre></div>
+<p>As an example, if users wish to plot the gSOI over rolling windows,
+they can run the following</p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="co">#Plot the generalized spillover index over rolling windows.</span></span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a><span class="fu">plot</span>(gen_spill_result_roll<span class="sc">$</span>end_of_window_date, gen_spill_result_roll<span class="sc">$</span>gSOI, </span>
+<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb63-4"><a href="#cb63-4" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(gen_spill_result_roll<span class="sc">$</span>gSOI),</span>
+<span id="cb63-5"><a href="#cb63-5" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;gSOI&quot;</span>,</span>
+<span id="cb63-6"><a href="#cb63-6" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;gSOI over rolling windows&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the 1,2 element of the gSOT matrix (generalized
+bilateral spillover to Bank of America from Bank of New York Mellon)
+over rolling windows, they can run the following</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="co">#Plot the 1,2 element of the gSOT matrix over the rolling windows.</span></span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a><span class="co">#This is the generalized bilateral spillover from BK to BAC over rolling windows.</span></span>
+<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" tabindex="-1"></a><span class="fu">plot</span>(gen_spill_result_roll<span class="sc">$</span>end_of_window_date,</span>
+<span id="cb64-5"><a href="#cb64-5" tabindex="-1"></a>     gen_spill_result_roll<span class="sc">$</span>gSOT[<span class="st">&quot;BAC&quot;</span>,<span class="st">&quot;BK&quot;</span>,],</span>
+<span id="cb64-6"><a href="#cb64-6" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb64-7"><a href="#cb64-7" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(gen_spill_result_roll<span class="sc">$</span>gSOT[<span class="st">&quot;BAC&quot;</span>,<span class="st">&quot;BK&quot;</span>,]),</span>
+<span id="cb64-8"><a href="#cb64-8" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb64-9"><a href="#cb64-9" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Spillover from BK to BAC&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the generalized total spillover from all other
+banks to Bank of America over rolling windows, they can run the
+following.</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="do">##Plot the generalized total spillover from all others to BAC over</span></span>
+<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a><span class="co">#rolling windows.</span></span>
+<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a><span class="fu">plot</span>(gen_spill_result_roll<span class="sc">$</span>end_of_window_date, gen_spill_result_roll<span class="sc">$</span>gen_from_others_to_i[<span class="st">&quot;BAC&quot;</span>,],</span>
+<span id="cb65-5"><a href="#cb65-5" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb65-6"><a href="#cb65-6" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(gen_spill_result_roll<span class="sc">$</span>gen_from_others_to_i[<span class="st">&quot;BAC&quot;</span>,]),</span>
+<span id="cb65-7"><a href="#cb65-7" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb65-8"><a href="#cb65-8" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Generalized Spillover From Others to BAC&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the generalized total spillover from Bank of
+New York Mellon to the other banks over rolling windows, they can run
+the following</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="do">###Plot the generalized total spillover to all others from BK over</span></span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a><span class="co">#rolling windows.</span></span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a><span class="fu">plot</span>(gen_spill_result_roll<span class="sc">$</span>end_of_window_date, gen_spill_result_roll<span class="sc">$</span>gen_to_others_from_i[<span class="st">&quot;BK&quot;</span>,],</span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(gen_spill_result_roll<span class="sc">$</span>gen_to_others_from_i[<span class="st">&quot;BK&quot;</span>,]),</span>
+<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Generalized Spillover to Others from BK&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If users wish to plot the generalized net total spillover for
+Barclays over rolling windows, they can run the following.</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="co">#Plot the generalized net total spillover for BCS over rolling windows.</span></span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a><span class="fu">plot</span>(gen_spill_result_roll<span class="sc">$</span>end_of_window_date,</span>
+<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a>     gen_spill_result_roll<span class="sc">$</span>gen_net[<span class="st">&quot;BCS&quot;</span>,],</span>
+<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">range</span>(gen_spill_result_roll<span class="sc">$</span>gen_net[<span class="st">&quot;BCS&quot;</span>,]),</span>
+<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;End of window date&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Net Total Spillover for BCS&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAyVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZmYAZpAAZrY6AAA6ADo6AGY6OgA6OmY6OpA6ZpA6ZrY6kLY6kNtmAABmADpmOgBmOjpmZgBmZmZmkLZmkNtmtrZmtttmtv+QOgCQOjqQZjqQkDqQkGaQkLaQtpCQttuQ27aQ2/+2ZgC2Zjq2ZpC2kDq2kGa225C227a229u22/+2/7a2/9u2///bkDrbtmbbtpDb27bb29vb2//b/7bb////tmb/25D/27b//7b//9v///+XYK8HAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAM+UlEQVR4nO2dC3vbthWGaaP2JidLm9nJuma1l3XNzG7r6tVsstZybP7/HzXcbwT1EQQpkfb5nkSWCODw4CVuJA+lqiXtVHVoB5YuAgREgIAIEBABAiJAQAQIiAABESAgAgREgIAIEBABAiJAQAQIiAABESAgAgREgIAIEBABAiJAQAQIiAABESAgAgREgIAIEBABAiJAQAQIiAABDQdUV9Ul//NwUW3ChMd/3rosRr151Mer6vTOvP/3H6rq6KubaHcyi3sZ7KYp/sNZVb3uTW60m2a/j79wJ6pXN12PsgAJPzuAPr89hoC8PMoFV2f+Vrl6GdWwDNBW2DzvTW6so9Kxh7f603nHoyxAogl1ANUVBuTlkfLq3ASeRhoPqKmOrncmW507JKqGoUd5gHgRDejxB4749Z2G4lWO78zA+finqvriGy/PR3GgXl0HgOrq6FvexK6kbxzkf3ihk5tUC/LMyf1tZRHriGDy/dvq+MY4KxHZQkEy/6Bcvj8T3nIkJx+UE3xPgUeZgDhuBYi/Cp3c7gCkj4Tcpcyz1U33OgQkC3NPz10TNFl8QM6cIsMz8/fOEZ1B2TWAXKEg2QL6KHbLd6A+Pf719a+RR1mAjr/mRRWgWhwKU6mgc1hAPJV701Q2D0/5/Z0qFHaxo29+cgeB2/1F9NAYkGdO7YI7ch44wtNOb9r/GbOi/fg+RMlGCrI/IgQe5QH6kTsirSnn1HHoA6S310GeT2KC2CQG6ZMPd62dKUX2GJBvrlEvHIHvSKMK+4DCQkGyaavf2rbi1cB5lAfolnfPfwhA3KTtCz2ADIPG5Xl8bwbwYNyVM6zqJdqWKBMBCszx3V/admUdCcblxu/JTSLZG6QjQIFHmYC4qd8JQNsKAjLtVg4YpotVJ3//dBED4mU+fXdW6Z5rht+ITWBO7EPVynekCygoFCUrpz9f2FEjkPUoE5AiL1vQZbC9C6jbglSVHkJA9uj5XRG1IFG/v5lBxjqS14K003pXZpD+6ibyKBeQnDQ2wbA2eAxSk080SHNLR+/u5HQi8w0ag1TPipetXUDRGJRqQVd6rnPTfOhRLiDZhDZ69cLbp5wjgiVZchYzI8fpnXBiE81ilRmaBs5irV219juSmsXSYxDP0LNQHNPFZBNy6yCxSzEMgHWQyvPzld1v4lRD2qjd+x3roFYaVPv0HEkACtdBSUByoz3VeB17lA1IuCYAfH7PW7k8nxNL2RN3qhmvpN+1No+YxU4+NKb/mAJyzlCrXb6Pn98ruz0r6XeqkOtazpEUIK9QGtCr4GT1p45HC7vcEZ+zLUAECIgAAREgoGUBWqAIEBABAiJAQAQIiAABESAgAgREgIAIEBABAiJAQAQIiAABESAgAgREgIAIEBABAiJAQAQIiAABESAgAgREgIAIEFAeIBM6s7gbxPMpC1BjokG3fY9BVKvRHIAeryyWpufpidX02FkAPVzYiNJtTyd73oCoBSE1Jii5fwzKMbcnsdTGeQCZmNL+57eeO6B9myuWgMNShJ4YoGQjGFrwGQBKVnFYyb7SewaUv/7KUgEgtk9AZogW2us6qAQQ22cLerxCJ2ELBMSSI9hMXezxKn7yrMjcUGUCYv7b/QLiK8TLnenLA6T/xXrWsxiL3xKgKHv8ds+AvHPWKcwNUB4gRoCG5yZAIDcBArkJEMhNsxjITYBSuT0gBCiVWwFxLwQoyk2AQO4OoAQhArR0QKOv4KQ0BhALAHVO6Q8NaPwlrpQIEFAuoJZFgLoXhQgQk4WY27gwQJMOQlMAYksClLhSXsRrJCDfiwMDiu+LHR4QWxagjjlm5pLWbihQPiDGWAhlaYCsj/bjaJN9t/76Czgc6wAUzLf5Gg5IN1vmmtySAelxoD0IoMTulgjI72bjFkZmNsoB1Jd5cYBaM5mNB8SeOiCvm+UDYvmA2BBALOVov+YGZFe0nbMhJOZq/HQBCU0AaGDh1QJiBtBgQnoi0qvhLEC9zW0VgIYSmhEQ63U0rT0AsidHwzuZAWROe7MA9aZa02lH09rHNemRgMyAsiZA8HmxNCAWAgJ1tSuD1qczBFB7aEADnhdLbYxOy7IAtRMDYnMCGvu0TwgIXmwsA7TDrDbW72hKeXHSI58Xc4BYDiA2KaB2fkAFz4v5gMBkz2JA7WoAlT0vZvwbAig+6xwKaOdadA+Ayp8XY97Y0puFdRrDagAVm4tuxiSzqJdnCqhNAmKdD6yzbQJA/q7nBLSt+n8erxwQSwMachoHAAW362YCVFfV+f2Xd/6Er6wMf14MAGK9gDAh1HvnB1SLHyFSPwkz+rHwRC3YhIB2Z5gZkGw39y8EoLIvFogBuQ1ucRgDGjAILQCQ/BnSX9vSLxboAjJb3A2tEBBaG6TMJrPMvFA07UahGm1uByC3KciBAQ2c6GYepBs1ffU/VjcSkL0W4VpSNqBB1yvnBjSRubAmzAMUbPQLDGhBiwFU/qxGp3WY5WFfFTEgtAayO9NvVgho1z34yQBZrQlQay5u7B5FMKBB+9ZaFSD5Cu8w7z4NfQ6AcBvpTcq/cbuiWSya4IcV8rdn3L13Wg8gs3QuADQ8/sPp+QAax+eZAcqb4aUIENBqAHVOU4cU8rdmBtYYLRxQ4pxrLKCBpWMRIKD1AcKFdm19qoBynppKoWQEKFHI35ZPRmvpgNKXnkGhlJ2VAMr8HkV77yIPUCfvegBlmjM3v0YB8qa9MStErScIKL5u/TwA5VQwBjQiet9p6YDsZdYc48GFfROHluWeEwECWgmgvPqFgMaPP0JPFRAjQLuKeeP6qGscntYCKEvMWxkUTGBSTxqQHpyfPKDsM03TrUpmL6PlAxpxIs7c1F40/ggtHtCYKxXuIYXiBjQXoHHPi3U0EpBdHI4/ibeaKQRv3PNiHY0HNGoFntIsgCb7dSjGkpd3cLnWAMouGmu+MGClwjDgkcOsBZRfNNYaWlDGnk256G+B5hqDpvl9sbHNYPGApvp9MWZf8jQBGKOFr4PsS54I0JBy02imWUyMPNvyheJYrQKQnL8Knhcr0RoAaTSH+RnRNQC6P5OADvNDtGsAdNAWNKFmAiRGmU1b/LzYAjTXNM8ZHV33L6QJ0J7Nzac5Ae18VmM1OhCgwt0hb+YtPlUZAgREgIAI0IwiQGW7I0AEqGx3BIgAPTkRICACBESAgAgQEAECIkBABAiIAAERICACBESAgAgQ0PSAZCy1vCjrfa/y/Ut5L7/hSS4upJtebN37HmedvtW3efq+GhNpckCPV9ytRtyg3op7sMrjhwsZ7NDIu7LG1W56mXXxPcU6tiK0LnJsxtZnckDKxeb4Vl3br4Vn/CiKKjxebcyW1lz799PLrKt4ARNV4aW33pfQ5mumMYgfO1sXcSt/2wXUTS+zrpqLaTQuXX6Y7T7MWNXHt8EXT2+7XSyRXmRdA9Lmg/R6fAOaCZAI/wiOqKmJN4ym0kus6zajAfnpvcE6QzQLoK0ZRSMA4kja5j4aUK91OUgnANmxeozmAKTCh7qdIBgXRnexPuvyJwmO//vmumO97o17H6AZAOmHpgIc4TAqlkPn3fQy60p8SRRbL+phMwAyo0Aw0XotyNSmm15mXad3p3m3NhqjGdZB5nj5S7XEGJRIL7IuF4PbYA6YYAiaHlCjVvbCKW/p70YJL7yxm15kXcSYeixsesEqsaWTVSgCBESAgAgQEAECIkBABAiIAAERICACBESAgAgQEAECIkBABAiIAAERICACBESAgAgQEAECIkBABAiIAAERICACBESAgGYHVOsw3DhGpxNS0FTxtxLFXyU3IA4hyLAtieowmh9QT/RSXNdBUTxZgLp8x2hBgAZU52kDerj4y4WKeBeRKd/Z2BUZEnN/VrlYahmqWp/+xmuYKKQK+BnVHmyGWgbWC4s8pak6XTdLewUkouT5/1pGN5vgp+pSxj6Z493ISm1EiNiDBBQXMgW8jGpHJoMIKxMlpMVGRnYuLcrVlxmkz9Uoc392qULiagVIVY/3DANIdJL6z6d39y+uFaCokC3gZRTlbIYHEcYpPtnimVHYofbagi7li3JXjxaqXvzVAOJ/H958//KW51I1jAr5BUxGUS6wuq0qVVR9LolSPACgpgtIVNYMqfX5/Ze/vbmuN60PqAkBic0uo5Czyked4x91Cyp91meBLYiPLf/atPUfry7b3S3IyygUZjBdrCyAU+gAgHQIc88Y1N6//Pq8bb54cR0AsoVsAS+jLGYyqJDsyuNbpAMA0s+09Mxiat7aihnaB+QKmQJeRimTQTUeMynI41AXtKO9zWK6jai5t7sO8o61jaYOAMXroDYOu7YZZPyvYFKbdVBJHDCdrAIRICACBESAgAgQEAECIkBABAiIAAERICACBESAgAgQEAECIkBABAiIAAERICACBESAgAgQEAECIkBABAjo/5iuRDAIr8SDAAAAAElFTkSuQmCC" /><!-- --></p>
+<p>#References</p>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-DY2012" class="csl-entry">
+Diebold, Francis X, and Kamil Yilmaz. 2012. <span>“Better to Give Than
+to Receive: Predictive Directional Measurement of Volatility
+Spillovers.”</span> <em>International Journal of Forecasting</em> 28
+(1): 57–66.
+</div>
+<div id="ref-DY2014" class="csl-entry">
+Diebold, Francis X, and Kamil Yılmaz. 2014. <span>“On the Network
+Topology of Variance Decompositions: Measuring the Connectedness of
+Financial Firms.”</span> <em>Journal of Econometrics</em> 182 (1):
+119–34.
+</div>
+<div id="ref-KPP1996" class="csl-entry">
+Koop, Gary, M Hashem Pesaran, and Simon M Potter. 1996. <span>“Impulse
+Response Analysis in Nonlinear Multivariate Models.”</span> <em>Journal
+of Econometrics</em> 74 (1): 119–47.
+</div>
+<div id="ref-LW2021" class="csl-entry">
+Lastrapes, William D, and Thomas FP Wiesen. 2021. <span>“The Joint
+Spillover Index.”</span> <em>Economic Modelling</em> 94: 681–91.
+</div>
+<div id="ref-LW2025" class="csl-entry">
+———. 2025. <span>“Regional Bank Failures and Volatility
+Transmission.”</span> <em>Journal of Financial Stability</em> 78:
+101404.
+</div>
+<div id="ref-PS1998" class="csl-entry">
+Pesaran, H Hashem, and Yongcheol Shin. 1998. <span>“Generalized Impulse
+Response Analysis in Linear Multivariate Models.”</span> <em>Economics
+Letters</em> 58 (1): 17–29.
+</div>
+<div id="ref-WB2024" class="csl-entry">
+Wiesen, Thomas FP, and Paul M Beaumont. 2024. <span>“A Joint Impulse
+Response Function for Vector Autoregressive Models.”</span>
+<em>Empirical Economics</em> 66 (4): 1553–85.
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
