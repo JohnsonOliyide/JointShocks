@@ -68,27 +68,40 @@ knitr::knit_hooks$set(output = function(x, options) {
 })
 knitr::opts_chunk$set(linewidth = 80)
 
-# Render the exact matrix returned by summary(), without its console printing.
-# Both formats share the same values, row labels, and column labels.
-spillover_table <- function(object, caption) {
-  invisible(capture.output(tab <- summary(object)))
-  tab[] <- trimws(tab)
+# Use the same values and labels in HTML and PDF; only the layout differs.
+result_table <- function(tab, caption, css_class = "result-table", digits = 4) {
+  if (is.numeric(tab)) {
+    tab <- matrix(formatC(tab, format = "f", digits = digits),
+                  nrow = nrow(tab), dimnames = dimnames(tab))
+  } else {
+    tab[] <- trimws(tab)
+  }
   if (knitr::is_html_output()) {
-    cat('<div class="spillover-table" role="region" tabindex="0"',
+    cat('<div class="', css_class, '" role="region" tabindex="0"',
         ' aria-label="', caption, '">\n', sep = "")
     cat(as.character(knitr::kable(tab, format = "html", escape = TRUE,
                                 align = rep("r", ncol(tab)), caption = caption)))
     cat("\n</div>\n")
   } else {
     cat("\\begin{center}\n\\textbf{", caption, "}\\par\\smallskip\n",
-        "\\resizebox{\\linewidth}{!}{%\n", sep = "")
+        "\\sbox0{%\n", sep = "")
     cat(as.character(knitr::kable(tab, format = "latex", escape = TRUE,
                                 align = rep("r", ncol(tab)))))
-    cat("\n}\n\\end{center}\n")
+    cat("\n}\n\\ifdim\\wd0>\\linewidth\n",
+        "\\resizebox{\\linewidth}{!}{\\usebox0}\n",
+        "\\else\\usebox0\\fi\n\\end{center}\n", sep = "")
   }
   invisible(tab)
 }
 
+summary_table <- function(object, caption, css_class = "result-table") {
+  invisible(capture.output(tab <- summary(object)))
+  result_table(tab, caption, css_class)
+}
+
+spillover_table <- function(object, caption) {
+  summary_table(object, caption, css_class = "spillover-table")
+}
 
 ```
 
@@ -237,7 +250,15 @@ To illustrate, the jFEVD result can be interpreted as follows: approximately **1
 
 ```{r}
 jfevd <- run_full_jFEVD(VAR_model, from_set = c("BCS", "CS", "DB"), H = 30)
+```
+
+```{r, eval=FALSE}
 jfevd
+```
+
+```{r, echo=FALSE, results="asis"}
+jfevd_table <- result_table(cbind("jFEVD (proportion)" = jfevd),
+                            "Joint FEVD from BCS, CS, and DB (proportions)", digits = 8)
 ```
 
 ### **Generalized Forecast Error Variance Decomposition (gFEVD)**
@@ -251,8 +272,15 @@ For instance, using pre-pandemic data, the gFEVD results suggest that **7.2%** o
 
 ```{r}
 genspill_results <- genspill(VAR_model, H = 30)
-genspill_results$gFEVD
+```
 
+```{r, eval=FALSE}
+genspill_results$gFEVD
+```
+
+```{r, echo=FALSE, results="asis"}
+gfevd_table <- result_table(genspill_results$gFEVD,
+                            "Generalized FEVD (proportions)", digits = 8)
 ```
 
 
@@ -279,7 +307,15 @@ In the examples below, `response` selects the bank whose response is measured. U
 ```{r}
 jIRF_CI <- bootstrap_jIRF(boot_model, response = "BAC", shocks = c("BCS", "CS", "DB"),
                            H = 8, CI = 0.80)
+```
+
+```{r, eval=FALSE}
 summary(jIRF_CI)
+```
+
+```{r, echo=FALSE, results="asis"}
+jirf_summary_table <- summary_table(jIRF_CI,
+  "BAC joint response to BCS, CS, and DB: 80% confidence interval")
 ```
 
 **Sum of generalized IRFs (gIRF sum) with confidence interval**
@@ -287,14 +323,30 @@ summary(jIRF_CI)
 ```{r}
 gIRF_sum_CI <- bootstrap_gIRF_sum(boot_model, response = "BAC", shocks = c("BCS", "CS", "DB"),
                                    H = 8, CI = 0.80)
+```
+
+```{r, eval=FALSE}
 summary(gIRF_sum_CI)
+```
+
+```{r, echo=FALSE, results="asis"}
+girf_sum_summary_table <- summary_table(gIRF_sum_CI,
+  "BAC sum of responses to BCS, CS, and DB: 80% confidence interval")
 ```
 
 **A single generalized IRF (gIRF) with confidence interval**
 
 ```{r}
 gIRF_CI <- bootstrap_gIRF(boot_model, response = "BAC", shock = "BCS", H = 8, CI = 0.80)
+```
+
+```{r, eval=FALSE}
 summary(gIRF_CI)
+```
+
+```{r, echo=FALSE, results="asis"}
+girf_summary_table <- summary_table(gIRF_CI,
+  "BAC response to BCS: 80% confidence interval")
 ```
 
 You can visualize any of these bootstrapped IRFs directly with base R's `plot()`/`polygon()`, using the `lower`, `original`, and `upper` fields returned by each function. In all of the examples below, the shaded region shows the 80% confidence interval, and the solid/dashed line shows the original (non-bootstrapped) IRF.
