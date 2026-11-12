@@ -5,6 +5,7 @@ on:
     paths:
       - 'vignettes/JointShocks.Rmd'
       - 'vignettes/tutorial-header.html'
+      - 'vignettes/tutorial-pdf.tex'
       - 'vignettes/references.bib'
       - 'scripts/render-tutorial.R'
       - '.github/workflows/render-tutorial.yaml'
@@ -21,15 +22,20 @@ jobs:
         with:
           use-public-rspm: true
       - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-tinytex@v2
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::rmarkdown
             any::readxl
           needs: website
-      - name: Render all examples and figures
+      - name: Render matching HTML and PDF tutorials
         run: Rscript scripts/render-tutorial.R
       - uses: actions/upload-artifact@v4
         with:
           name: rendered-tutorial
-          path: docs/index.html
+          path: |
+            docs/index.html
+            vignettes/JointShocks.pdf
+            vignettes/JointShocks.tex
+            consistency-check.txt

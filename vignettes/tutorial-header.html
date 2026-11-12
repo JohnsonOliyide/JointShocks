@@ -60,8 +60,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   var toc = document.querySelector("#TOC");
   if (toc) { toc.setAttribute("role", "navigation"); toc.setAttribute("aria-label", "Tutorial sections"); }
-  var labels = ["Overview", "Installation", "Load your data", "Example dataset", "Empirical analysis", "Impulse responses and variance decompositions", "Spillover metrics"];
-  if (toc) toc.querySelectorAll("a").forEach(function(a, i) { if (labels[i]) a.textContent = labels[i]; });
+  var labels = {
+    "#purpose": "Overview",
+    "#installation-procedure": "Installation",
+    "#loading-your-own-data": "Load your data",
+    "#sample-data-used-in-this-vignette": "Example dataset",
+    "#empirical-analysis": "Empirical analysis",
+    "#impulse-responses-and-variance-decompositions": "Impulse responses and variance decompositions",
+    "#spillover-metrics": "Spillover metrics",
+    "#saving-results": "Saving results",
+    "#references": "References"
+  };
+  if (toc) toc.querySelectorAll("a").forEach(function(a) { if (labels[a.hash]) a.textContent = labels[a.hash]; });
   document.querySelectorAll("pre.sourceCode").forEach(function (pre) {
     var button = document.createElement("button");
     button.className = "copy-code"; button.type = "button"; button.textContent = "Copy";
