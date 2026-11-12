@@ -7,7 +7,7 @@ output:
     toc_depth: 2
     number_sections: true
     includes:
-      in_header: tutorial-header.html
+      after_body: tutorial-header.html
   pdf_document:
     toc: true
     toc_depth: 2
