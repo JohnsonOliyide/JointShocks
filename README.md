@@ -10,7 +10,7 @@ It provides tools to compute:
 
 ## Step 1: Install the devtools package
 
-To install an R package from GitHub, start by installing the `devtools` package. The best way to do this is from CRAN, by typing:
+The package is not on CRAN yet. To install an R package from GitHub, start by installing the `devtools` package by typing:
 
 ```r
 install.packages("devtools")
@@ -27,11 +27,11 @@ install_github("JohnsonOliyide/JointShocks")
 
 [JointShocks Tutorial](https://johnsonoliyide.github.io/JointShocks/)
 
-The tutorial walks through estimating a VAR model, computing joint and generalized impulse response functions, joint and generalized forecast error variance decompositions, and spillover metrics over both the full sample and rolling windows, with full worked examples using the bundled bank volatility dataset.
+The tutorial walks through estimating a VAR model, computing joint and generalized impulse response functions, joint and generalized forecast error variance decompositions, and spillover metrics over both the full sample and rolling windows, with full worked examples using the bundled bank volatility dataset. If you have any questions or comments, please feel free to contact me at oliyide.ayobamij@gmail.com.
 
 ## Authors
 
-Johnson Oliyide and Thomas F. P. Wiesen
+Johnson Oliyide and Thomas Wiesen
 
 ## References
 
